@@ -99,7 +99,7 @@ cafe-management/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-username>/cafe-management.git
+   git clone https://github.com/shaimaabd212/Cafe-Management-System.git
    ```
 2. Open `index.html` in any browser — no server or install needed.
 3. Use the sample accounts to log in:

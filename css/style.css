@@ -1,0 +1,21 @@
+:root {
+  /* Riwaq brand colours */
+  --riwaq-red:    #B3261E;  /* Ghadames red  - primary */
+  --riwaq-green:  #1F5C43;  /* Oasis green   - secondary */
+  --riwaq-blue:   #1C6BA6;  /* Sea blue      - secondary */
+  --riwaq-saffron:#E3A21A;  /* Saffron       - accent */
+  --riwaq-lime:   #FAF5EA;  /* Lime wash     - background */
+  --riwaq-sand:   #E4CDA7;  /* Sandstone     - surfaces */
+  --riwaq-clay:   #A65A34;  /* Clay          - details */
+  --riwaq-ink:    #211A17;  /* Kilim black   - text */
+
+  /* Type */
+  --font-ar-display: "Reem Kufi", "Tajawal", sans-serif;
+  --font-body:       "Tajawal", system-ui, sans-serif;
+  --font-latin-display: "Marcellus", Georgia, serif;
+  --font-tifinagh:   "Noto Sans Tifinagh", sans-serif;
+
+  /* Shape */
+  --radius-arch: 999px 999px 0 0;  /* arched tops for images and cards */
+  --radius-ui: 4px;
+}

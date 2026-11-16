@@ -37,17 +37,17 @@
         <form id="register-form" novalidate>
           <div class="field">
             <label for="name" data-i18n="field.fullName">Full name</label>
-            <input id="name" name="name" type="text" autocomplete="name" placeholder="e.g. Yasmina Ali" data-i18n-placeholder="ph.name">
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="Your full name" data-i18n-placeholder="ph.name">
             <div class="error"></div>
           </div>
           <div class="field">
             <label for="email" data-i18n="field.email">E-mail</label>
-            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="your@email.com" data-i18n-placeholder="ph.email">
             <div class="error"></div>
           </div>
           <div class="field">
             <label for="phone"><span data-i18n="field.phone">Phone</span> <span class="opt" data-i18n="field.optional">(optional)</span></label>
-            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="0912345678">
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="09XXXXXXXX" data-i18n-placeholder="ph.phone">
             <div class="error"></div>
           </div>
           <div class="form-row">
@@ -70,6 +70,7 @@
     </section>
   </main>
 
+  <script src="js/shared/storage.js"></script>
   <script src="js/shared/auth.js"></script>
 </body>
 </html>

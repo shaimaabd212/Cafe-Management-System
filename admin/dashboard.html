@@ -47,6 +47,7 @@
         <p class="sub" id="today-label"></p>
       </div>
       <div class="actions">
+        <button class="btn btn-ghost" data-add-sample data-i18n="dash.addSample">Add sample orders</button>
         <a class="btn btn-outline" href="reports.html" data-i18n="dash.viewReports">View reports</a>
       </div>
     </header>
@@ -56,7 +57,7 @@
       <div class="kilim-strip"></div>
       <h3 data-i18n="dash.noOrders">No orders yet</h3>
       <p data-i18n="dash.noOrdersText">When customers and cashiers place orders, today's numbers will appear here.</p>
-      <button class="btn btn-secondary" id="load-sample" data-i18n="dash.loadSample">Load sample orders for a demo</button>
+      <button class="btn btn-secondary" id="load-sample" data-add-sample data-i18n="dash.loadSample">Load sample orders for a demo</button>
     </section>
 
     <div id="dash-content">
@@ -113,6 +114,7 @@
   </main>
 </div>
 
+<script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script>guard(["manager"]);</script>
 <script src="../js/admin/dashboard.js"></script>

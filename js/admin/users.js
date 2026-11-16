@@ -13,6 +13,7 @@ const userForm    = document.getElementById("user-form");
 
 // Turn "2026-11-16T10:00:00Z" into "16 Nov 2026" / "16 نوفمبر 2026".
 function formatDate(iso) {
+  if (!iso) return "—";
   return new Date(iso).toLocaleDateString(getLocale(), { day: "numeric", month: "short", year: "numeric" });
 }
 
@@ -41,7 +42,7 @@ function renderUsers() {
       <td><strong>${escapeHtml(u.name)}</strong>${me && me.id === u.id ? ' <small style="color:var(--ink-soft)">' + t("users.you") + '</small>' : ""}</td>
       <td><bdi>${escapeHtml(u.email)}</bdi></td>
       <td><bdi>${escapeHtml(u.phone) || "—"}</bdi></td>
-      <td><span class="badge ${u.role}">${t("role." + u.role)}</span></td>
+      <td><span class="badge badge-${u.role}">${t("role." + u.role)}</span></td>
       <td>${formatDate(u.createdAt)}</td>
       <td>
         <div class="row-actions">

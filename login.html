@@ -39,7 +39,7 @@
         <form id="login-form" novalidate>
           <div class="field">
             <label for="email" data-i18n="field.email">E-mail</label>
-            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="your@email.com" data-i18n-placeholder="ph.email">
             <div class="error"></div>
           </div>
           <div class="field">
@@ -57,11 +57,13 @@
           <button type="button" data-demo="manager@cafe.com"><bdi>manager@cafe.com</bdi> — <span data-i18n="role.manager">Manager</span></button>
           <button type="button" data-demo="cashier@cafe.com"><bdi>cashier@cafe.com</bdi> — <span data-i18n="role.cashier">Cashier</span></button>
           <button type="button" data-demo="barista@cafe.com"><bdi>barista@cafe.com</bdi> — <span data-i18n="role.barista">Barista</span></button>
+          <button type="button" data-demo="customer@cafe.com"><bdi>customer@cafe.com</bdi> — <span data-i18n="role.customer">Customer</span></button>
         </div>
       </div>
     </section>
   </main>
 
+  <script src="js/shared/storage.js"></script>
   <script src="js/shared/auth.js"></script>
 </body>
 </html>

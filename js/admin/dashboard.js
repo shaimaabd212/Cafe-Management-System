@@ -2,33 +2,36 @@
    dashboard.js — Today's sales, order count, pending orders,
    best-selling items and the sales-by-day chart.
    Owner: Yasmina (M1 Administration)
-   Needs: js/shared/i18n.js (t, getLocale), js/shared/auth.js (readData, KEYS)
+   Needs: js/shared/i18n.js (t, getLocale), js/shared/storage.js (load, save)
 
    The calculation functions here are also used by reports.js.
 
-   Order shape expected in localStorage "cafe_orders"
-   (written by Shaima's cart/orders pages):
+   Orders are read from storage.js → localStorage "riwaq_orders".
+   Order shape (defined by Shaima in storage.js):
    {
-     id: 101,
-     customerId: 4,                // or null for walk-in
-     items: [ { itemId: 3, name: "Latte", price: 7, qty: 2 } ],
-     total: 14,
+     id: 1001, customerId: 4, customerName: "…",
+     type: "dine-in" | "takeaway", table: "5",
+     items: [ { menuId: 1, name: "Arabic Coffee", price: 6, qty: 2 } ],
+     total: 20,
      status: "Pending" | "Preparing" | "Ready" | "Completed" | "Cancelled",
-     type: "dine-in" | "takeaway",
-     table: 5,
-     payment: "cash" | "card" | null,
-     createdAt: "2026-11-16T09:30:00.000Z"
+     placedAt: 1763289000000,     // time in milliseconds (Date.now())
+     paid: false
    }
    ========================================================= */
 
 /* ---------- Calculations ---------- */
 
 function getOrders() {
-  return readData(KEYS.orders, []);
+  return load("orders", []);
+}
+
+// When the order was placed, as a Date (storage.js saves it as milliseconds in "placedAt").
+function orderTime(order) {
+  return new Date(order.placedAt != null ? order.placedAt : order.createdAt);
 }
 
 // Money and dates
-// 52 → "52.00 LD" in English, "52.00 د.ل" in Arabic
+// 52 → "52.00 LYD" in English, "52.00 د.ل" in Arabic
 function formatMoney(value) {
   return Number(value || 0).toFixed(2) + " " + t("currency");
 }
@@ -51,7 +54,7 @@ function isSale(order) {
 }
 
 function ordersOnDay(orders, key) {
-  return orders.filter(o => dayKey(o.createdAt) === key);
+  return orders.filter(o => dayKey(orderTime(o)) === key);
 }
 
 function totalSales(orders) {
@@ -211,18 +214,17 @@ function escapeText(text) {
   return div.innerHTML;
 }
 
-/* ---------- Sample orders (only for demos when there is no data) ---------- */
+/* ---------- Sample orders (for demos) ---------- */
 
-function loadSampleOrders() {
-  const menu = [
-    { itemId: 1, name: "Arabic Coffee", price: 4 },  { itemId: 2, name: "Espresso", price: 5 },
-    { itemId: 3, name: "Latte", price: 8 },          { itemId: 4, name: "Cappuccino", price: 8 },
-    { itemId: 5, name: "Mint Tea", price: 4 },       { itemId: 6, name: "Date Cake", price: 9 },
-    { itemId: 7, name: "Bseesa Bites", price: 6 },   { itemId: 8, name: "Fresh Orange Juice", price: 7 },
-  ];
+// Adds 14 days of sample orders (ending today) to the real orders.
+// Items and prices come from the menu saved by storage.js, so everything matches.
+function addSampleOrders() {
+  const menu = load("menu", []).filter(m => m.available !== false)
+    .map(m => ({ menuId: m.id, name: m.name, price: m.price }));
+  if (!menu.length) return;
   const statuses = ["Completed", "Completed", "Completed", "Completed", "Completed", "Cancelled"];
-  const orders = [];
-  let id = 1000;
+  const orders = getOrders();
+  let id = orders.reduce((max, o) => Math.max(max, o.id), 1000);
   for (let back = 13; back >= 0; back--) {
     const perDay = 6 + Math.floor(Math.random() * 10);
     for (let n = 0; n < perDay; n++) {
@@ -238,17 +240,19 @@ function loadSampleOrders() {
       }
       let status = statuses[Math.floor(Math.random() * statuses.length)];
       if (back === 0 && n < 3) status = ["Pending", "Preparing", "Ready"][n];
+      const type = Math.random() < 0.6 ? "dine-in" : "takeaway";
       orders.push({
-        id: ++id, customerId: null, items,
+        id: ++id, customerId: null, customerName: "",
+        type, table: type === "dine-in" ? String(1 + Math.floor(Math.random() * 12)) : "",
+        items,
         total: items.reduce((s, it) => s + it.price * it.qty, 0),
-        status, type: Math.random() < 0.6 ? "dine-in" : "takeaway",
-        table: 1 + Math.floor(Math.random() * 12),
-        payment: status === "Completed" ? (Math.random() < 0.7 ? "cash" : "card") : null,
-        createdAt: date.toISOString(),
+        status,
+        placedAt: date.getTime(),
+        paid: status === "Completed",
       });
     }
   }
-  writeData(KEYS.orders, orders);
+  save("orders", orders);
 }
 
 /* ---------- Page: dashboard.html ---------- */
@@ -288,14 +292,14 @@ function renderDashboard() {
   renderBestSellers(document.getElementById("best-list"), bestSellers(orders, 5));
 
   // Latest 6 orders
-  const latest = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6);
+  const latest = [...orders].sort((a, b) => orderTime(b) - orderTime(a)).slice(0, 6);
   document.getElementById("recent-body").innerHTML = latest.map(o => `
     <tr>
       <td>#${o.id}</td>
-      <td>${new Date(o.createdAt).toLocaleString(getLocale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
+      <td>${orderTime(o).toLocaleString(getLocale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
       <td>${o.type === "takeaway" ? t("type.takeaway") : t("where.table", { n: o.table || "—" })}</td>
       <td>${(o.items || []).reduce((s, it) => s + it.qty, 0)}</td>
-      <td><span class="badge ${o.status}">${t("status." + o.status)}</span></td>
+      <td><span class="badge badge-${o.status.toLowerCase()}">${t("status." + o.status)}</span></td>
       <td class="num">${formatMoney(orderTotal(o))}</td>
     </tr>`).join("");
 
@@ -305,11 +309,12 @@ function initDashboard() {
   if (!document.getElementById("dashboard")) return; // not on this page
   renderDashboard();
   attachChartTooltip(document.getElementById("sales-chart"), document.getElementById("chart-tip"));
-  document.getElementById("load-sample").addEventListener("click", () => { loadSampleOrders(); renderDashboard(); });
+  document.querySelectorAll("[data-add-sample]").forEach(btn =>
+    btn.addEventListener("click", () => { addSampleOrders(); renderDashboard(); }));
   window.addEventListener("resize", renderDashboard);
   document.addEventListener("langchange", renderDashboard); // redraw in the new language
   // Refresh when another tab (e.g. the cashier) changes the orders.
-  window.addEventListener("storage", e => { if (e.key === KEYS.orders) renderDashboard(); });
+  window.addEventListener("storage", e => { if (e.key === "riwaq_orders") renderDashboard(); });
 }
 
 initDashboard();

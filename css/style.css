@@ -2,6 +2,12 @@
    Riwaq Cafe — shared design system (style.css)
    Visual identity: Libyan heritage — Amazigh, Arab, Mediterranean
    Used by every page. Page-specific styles stay in each page.
+
+   PART A  Team base: tokens, navbar, buttons, cards, badges, footer
+   PART B  Module M1 (Yasmina): auth pages, admin layout, dashboard,
+           tables, forms, modal, Arabic / RTL support
+   Rule: Part B only ADDS classes. It never redefines Part A, so
+   the team's pages look exactly the same as before.
    ============================================================ */
 
 :root {
@@ -26,6 +32,21 @@
   /* Shape */
   --radius-arch: 999px 999px 0 0;  /* arched top for images/cards */
   --radius-ui: 6px;
+
+  /* ---- added for module M1 ---- */
+  --red-dark: #8E1D17;             /* hover on red surfaces */
+  --white:    #FFFFFF;
+  --shadow:   0 1px 2px rgba(33, 26, 23, .06), 0 6px 18px rgba(33, 26, 23, .06);
+
+  /* Arabic fonts (used when the page is switched to Arabic) */
+  --font-ar-head:  "Kufam", "Noto Kufi Arabic", sans-serif;
+  --font-ar-body:  "Noto Kufi Arabic", "Tajawal", sans-serif;
+  --font-tifinagh: "Noto Sans Tifinagh", sans-serif;
+
+  /* Patterns: Ghadames roofline + kilim diamond (Visual Identity, page 7) */
+  --roofline: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath d='M0 14 L12 2 L24 14Z' fill='%23B3261E'/%3E%3C/svg%3E");
+  --kilim: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='24'%3E%3Cpath d='M20 1 L31 12 L20 23 L9 12Z' fill='%23B3261E'/%3E%3Cpath d='M20 6 L26 12 L20 18 L14 12Z' fill='%23E3A21A'/%3E%3Cpath d='M20 9 L23 12 L20 15 L17 12Z' fill='%231F5C43'/%3E%3C/svg%3E");
+  --kilim-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='24'%3E%3Cpath d='M20 1 L31 12 L20 23 L9 12Z' fill='%23FAF5EA'/%3E%3Cpath d='M20 6 L26 12 L20 18 L14 12Z' fill='%23E3A21A'/%3E%3Cpath d='M20 9 L23 12 L20 15 L17 12Z' fill='%231F5C43'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
@@ -145,3 +166,264 @@ footer.site-footer a { color: var(--saffron); }
 /* ---------- Helpers ---------- */
 .muted { color: var(--muted); }
 .text-center { text-align: center; }
+
+/* ============================================================
+   PART B — Module M1 (Yasmina): login, register, users,
+   dashboard, reports + Arabic / RTL
+   ============================================================ */
+.ar  { font-family: var(--font-ar-head); }
+.tif { font-family: var(--font-tifinagh); }
+
+/* ---------- B1. Decorative strips ---------- */
+.roofline-strip { height: 14px; background: var(--roofline) repeat-x bottom; }
+.kilim-strip    { height: 24px; background: var(--kilim) repeat-x center; }
+
+/* ---------- B2. Extra button variants (base .btn is in Part A) ---------- */
+.btn-ghost { background: transparent; color: var(--muted); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--muted); }
+.btn-sm    { padding: 5px 12px; font-size: .88rem; }
+.btn-block { width: 100%; }
+
+/* ---------- B3. Forms ---------- */
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: .3rem; }
+.field input, .field select {
+  width: 100%; padding: .7rem .85rem; font: 1rem var(--font-body); color: var(--ink);
+  background: var(--white); border: 1.5px solid var(--line); border-radius: 8px;
+}
+.field input:focus, .field select:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(179, 38, 30, .12); }
+.field.invalid input, .field.invalid select { border-color: var(--red); }
+.field .hint  { font-size: .8rem; color: var(--muted); margin-top: .25rem; }
+.field .error { font-size: .8rem; color: var(--red); margin-top: .25rem; min-height: 1em; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+
+.alert {
+  padding: .7rem .9rem; border-radius: 8px; margin-bottom: 1rem; font-size: .92rem;
+  background: #FBE9E7; color: var(--red-dark); border: 1px solid #F1C4BF;
+}
+.alert.success { background: #E5F0EA; color: var(--green); border-color: #BCD8C9; }
+.alert[hidden] { display: none; }
+
+/* ---------- B4. Auth pages (login / register) ---------- */
+.auth-page { min-height: 100vh; display: grid; grid-template-columns: 1.05fr 1fr; }
+
+.auth-brand {
+  position: relative; overflow: hidden;
+  background: var(--red); color: var(--lime);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 3rem 3.5rem 9rem;
+}
+.auth-brand::before { /* Ghadames roofline along the top */
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 18px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='18'%3E%3Cpath d='M0 18 L12 4 L24 18Z' fill='%23FAF5EA'/%3E%3C/svg%3E") repeat-x bottom;
+  transform: rotate(180deg);
+}
+.auth-brand .arches { /* the riwaq arcade along the bottom */
+  position: absolute; left: 0; bottom: 0; width: 100%; height: 150px; opacity: .12;
+}
+.auth-brand .logo { width: 230px; margin-bottom: 2rem; }
+.auth-brand h1 { font-size: 2.3rem; color: var(--white); }
+.auth-brand h1 span { color: var(--saffron); }
+.auth-brand p { max-width: 30rem; opacity: .9; }
+
+.auth-panel { display: flex; flex-direction: column; justify-content: center; padding: 3rem; }
+.auth-card { width: 100%; max-width: 420px; margin: 0 auto; }
+.auth-card h2 { font-size: 2rem; margin-bottom: .25rem; }
+.auth-card .sub { color: var(--muted); margin: 0 0 1.75rem; }
+.auth-card .switch { text-align: center; margin-top: 1.25rem; font-size: .92rem; }
+.auth-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.auth-card .back { font-size: .88rem; color: var(--muted); text-decoration: none; }
+.lang-btn {
+  font: 600 .88rem var(--font-body); color: var(--red); background: var(--white);
+  border: 1.5px solid var(--sand); border-radius: 999px; padding: .35rem .95rem; cursor: pointer;
+}
+.lang-btn:hover { border-color: var(--red); }
+.opt { font-weight: 400; color: var(--muted); }
+
+.demo-accounts {
+  margin-top: 1.75rem; padding: 1rem; border-radius: var(--radius-ui);
+  background: var(--white); border: 1px dashed var(--sand); font-size: .85rem;
+}
+.demo-accounts strong { display: block; margin-bottom: .4rem; }
+.demo-accounts button {
+  font: inherit; background: none; border: 0; padding: .15rem 0; cursor: pointer; text-align: start;
+  color: var(--blue); text-decoration: underline; display: block;
+}
+
+/* ---------- B5. Admin layout (sidebar + main area) ---------- */
+.admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+.sidebar {
+  background: var(--red); color: var(--lime); padding: 1.1rem 1rem 0;
+  position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
+  overflow-y: auto;            /* on short screens the sidebar scrolls by itself */
+}
+.sidebar .brand { display: block; text-align: center; padding: 0 .5rem .6rem; }
+.sidebar .brand img { width: 108px; }
+.sidebar .kilim-strip { margin: 0 -.25rem .4rem; background-image: var(--kilim-light); }
+.sidebar nav a {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .5rem .75rem; border-radius: 8px; margin-bottom: .1rem;
+  color: var(--lime); text-decoration: none; font-weight: 500;
+}
+.sidebar nav a:hover { background: var(--red-dark); color: var(--white); }
+.sidebar nav a.active { background: var(--lime); color: var(--red); font-weight: 700; }
+.sidebar nav .section { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--sand); opacity: .85; margin: .75rem .75rem .3rem; }
+/* User box + Log out: pinned to the bottom so it is ALWAYS visible */
+.sidebar .me {
+  margin-top: auto; padding: .7rem .75rem .9rem; font-size: .85rem;
+  position: sticky; bottom: 0; background: var(--red);
+  border-top: 1px solid rgba(250, 245, 234, .25);
+}
+.sidebar .me .who { color: var(--white); font-weight: 600; }
+.sidebar .me .role { color: var(--sand); text-transform: capitalize; }
+.sidebar .me-actions { display: flex; gap: .4rem; margin-top: .6rem; }
+.sidebar .me .btn { flex: 1 1 auto; padding: .35rem .6rem; white-space: nowrap; color: var(--lime); border-color: rgba(250, 245, 234, .45); }
+.sidebar .me .btn:hover { background: var(--lime); color: var(--red); border-color: var(--lime); }
+
+.main { padding: 0 2.25rem 3rem; min-width: 0; }
+.main > .page-head {               /* scoped: other pages use .page-head too */
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: 2rem 0 1.25rem; margin-bottom: 1.5rem;
+  background: var(--roofline) repeat-x bottom / 18px 10px;
+}
+.main > .page-head h1 { font-size: 2rem; margin: 0; }
+.main > .page-head .sub { color: var(--muted); margin: .2rem 0 0; }
+.main > .page-head .actions { display: flex; gap: .5rem; flex-wrap: wrap; padding-bottom: 1rem; }
+
+.card h3 { font-size: 1.15rem; margin-bottom: 1rem; }
+.card .card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; }
+.card .card-head h3 { margin: 0; }
+.card .card-head small { color: var(--muted); }
+
+/* ---------- B6. Dashboard pieces ---------- */
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+.kpi { position: relative; overflow: hidden; }
+.kpi::after { /* small kilim diamond accent */
+  content: ""; position: absolute; top: 12px; inset-inline-end: 12px; width: 20px; height: 12px;
+  background: var(--kilim) no-repeat center / 20px 12px; opacity: .8;
+}
+.kpi .label { font-size: .85rem; color: var(--muted); }
+.kpi .value { font-family: var(--font-head); font-size: 2rem; line-height: 1.2; margin-top: .2rem; }
+.kpi .note  { font-size: .8rem; color: var(--muted); }
+.kpi.accent { border-top: 3px solid var(--red); }
+.kpi.warn   { border-top: 3px solid var(--saffron); }
+.kpi.ok     { border-top: 3px solid var(--green); }
+.kpi.info   { border-top: 3px solid var(--blue); }
+
+.grid-2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+
+/* Chart */
+.chart-wrap { position: relative; }
+.chart-wrap canvas { width: 100%; height: 260px; display: block; }
+.chart-tip {
+  position: absolute; pointer-events: none; background: var(--red-dark); color: var(--lime);
+  font-size: .8rem; padding: .4rem .6rem; border-radius: 6px; white-space: nowrap;
+  transform: translate(-50%, -110%); opacity: 0; transition: opacity .1s;
+}
+.chart-tip b { color: var(--white); }
+
+/* Best-seller bars */
+.bars { list-style: none; margin: 0; padding: 0; }
+.bars li { display: grid; grid-template-columns: 1.4rem 1fr auto; gap: .6rem; align-items: center; margin-bottom: .85rem; }
+.bars .rank { font-family: var(--font-head); color: var(--clay); }
+.bars .name { font-weight: 600; font-size: .92rem; }
+.bars .track { display: block; grid-column: 2 / 4; height: 8px; background: #F3EBDD; border-radius: 4px; overflow: hidden; }
+.bars .fill  { display: block; height: 100%; background: var(--red); border-radius: 4px; }
+.bars .qty { font-size: .85rem; color: var(--muted); }
+
+/* ---------- B7. Data tables + role badges ---------- */
+.table-wrap { overflow-x: auto; }
+table.data { width: 100%; border-collapse: collapse; font-size: .92rem; }
+table.data th {
+  text-align: start; font-weight: 600; color: var(--muted); font-size: .8rem;
+  text-transform: uppercase; letter-spacing: .06em;
+  padding: .65rem .75rem; border-bottom: 2px solid var(--sand);
+}
+table.data td { padding: .7rem .75rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.data tr:hover td { background: #FDFAF3; }
+table.data .num { text-align: end; font-variant-numeric: tabular-nums; }
+table.data tfoot td { font-weight: 700; border-top: 2px solid var(--sand); border-bottom: 0; }
+table.data .row-actions { display: flex; gap: .4rem; justify-content: flex-end; }
+
+/* Role badges, same style as the team's status badges (.badge-pending …) */
+.badge-manager  { background: var(--red);   color: var(--lime); }
+.badge-cashier  { background: var(--blue);  color: var(--lime); }
+.badge-barista  { background: var(--green); color: var(--lime); }
+.badge-customer { background: var(--sand);  color: var(--ink);  }
+
+/* ---------- B8. Toolbar, empty state, modal, toast ---------- */
+.toolbar { display: flex; gap: .75rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1rem; }
+.toolbar .field { margin: 0; }
+.toolbar .field input, .toolbar .field select { padding: .5rem .7rem; }
+.toolbar .grow { flex: 1; min-width: 200px; }
+
+.admin-layout .empty { text-align: center; padding: 2.5rem 1rem; color: var(--muted); }   /* scoped */
+.admin-layout .empty .kilim-strip { width: 120px; margin: 0 auto 1rem; }
+
+/* Modal (add / edit user) */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(33, 26, 23, .45);
+  display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 50;
+}
+.modal-backdrop.open { display: flex; }
+.modal { background: var(--lime); border-radius: 14px; width: 100%; max-width: 520px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+.modal .roofline-strip { background-color: var(--white); }
+.modal-body { padding: 1.5rem 1.75rem; }
+.modal-body h2 { font-size: 1.5rem; margin-bottom: 1.25rem; }
+.modal-foot { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .5rem; }
+
+.toast {
+  position: fixed; bottom: 1.5rem; inset-inline-end: 1.5rem; background: var(--green); color: var(--white);
+  padding: .75rem 1.1rem; border-radius: 8px; box-shadow: var(--shadow); z-index: 60;
+  opacity: 0; transform: translateY(10px); transition: all .2s;
+}
+.toast.show { opacity: 1; transform: none; }
+
+/* =========================================================
+   B9. ARABIC (right-to-left) — works on every page that loads i18n.js
+   <html dir="rtl"> is set by i18n.js. Flexbox and Grid flip by
+   themselves; here we only change fonts and a few details.
+   ========================================================= */
+/* Swap the text font for Arabic: every rule that uses var(--font-body) follows. */
+:root[dir="rtl"] { --font-body: var(--font-ar-body); }
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 { font-family: var(--font-ar-head); font-weight: 700; }
+[dir="rtl"] .kpi .value { font-family: var(--font-ar-body); font-weight: 700; font-size: 1.75rem; }
+[dir="rtl"] h1 { line-height: 1.5; }
+[dir="rtl"] .auth-brand h1 { font-size: 2.6rem; }
+/* Letter-spacing breaks the joining of Arabic letters, so turn it off. */
+[dir="rtl"] table.data th,
+[dir="rtl"] .sidebar nav .section { letter-spacing: 0; font-size: .85rem; }
+/* E-mails, passwords and phone numbers are always typed left-to-right. */
+[dir="rtl"] input[type="email"], [dir="rtl"] input[type="password"], [dir="rtl"] input[type="tel"] {
+  direction: ltr; text-align: right;
+}
+[dir="rtl"] input[type="email"]::placeholder, [dir="rtl"] input[type="password"]::placeholder,
+[dir="rtl"] input[type="tel"]::placeholder { text-align: right; }
+
+/* ---------- B10. Responsive & print ---------- */
+@media (max-width: 1000px) {
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 820px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-brand { padding: 2.5rem 1.5rem 2rem; }
+  .auth-brand .arches { display: none; }
+  .auth-brand .logo { width: 170px; margin-bottom: 1.25rem; }
+  .auth-brand h1 { font-size: 1.8rem; }
+  [dir="rtl"] .auth-brand h1 { font-size: 2rem; }
+  .admin-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .sidebar .brand img { width: 90px; }
+  .sidebar nav { display: flex; flex-wrap: wrap; gap: .25rem; }
+  .sidebar nav .section { display: none; }
+  .main { padding: 0 1rem 2rem; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media print {
+  .sidebar, .main > .page-head .actions, .toolbar { display: none !important; }
+  .admin-layout { display: block; }
+}

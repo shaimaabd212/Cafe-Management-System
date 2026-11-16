@@ -99,18 +99,18 @@
         <input type="hidden" name="id">
         <div class="field">
           <label for="u-name" data-i18n="field.fullName">Full name</label>
-          <input id="u-name" name="name" type="text">
+          <input id="u-name" name="name" type="text" placeholder="Your full name" data-i18n-placeholder="ph.name">
           <div class="error"></div>
         </div>
         <div class="form-row">
           <div class="field">
             <label for="u-email" data-i18n="field.email">E-mail</label>
-            <input id="u-email" name="email" type="email">
+            <input id="u-email" name="email" type="email" placeholder="your@email.com" data-i18n-placeholder="ph.email">
             <div class="error"></div>
           </div>
           <div class="field">
             <label for="u-phone" data-i18n="field.phone">Phone</label>
-            <input id="u-phone" name="phone" type="tel" placeholder="0912345678">
+            <input id="u-phone" name="phone" type="tel" placeholder="09XXXXXXXX" data-i18n-placeholder="ph.phone">
             <div class="error"></div>
           </div>
         </div>
@@ -142,6 +142,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script>guard(["manager"]);</script>
 <script src="../js/admin/users.js"></script>

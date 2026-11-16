@@ -8,7 +8,7 @@
    3. applyLanguage() puts the right text in every element and sets
       <html lang="ar" dir="rtl">  so the page flows right-to-left.
    4. In JavaScript, use t("key") to get a translated string.
-   5. The choice is saved in localStorage ("cafe_lang").
+   5. The choice is saved in localStorage ("riwaq_lang").
 
    Load it in <head> (before the other scripts):
      <script src="js/shared/i18n.js"></script>
@@ -16,12 +16,12 @@
      <button data-lang-toggle></button>
    ========================================================= */
 
-const LANG_KEY = "cafe_lang";
+const LANG_KEY = "riwaq_lang";
 
 const I18N = {
   en: {
     "switchTo": "العربية",
-    "currency": "LD",
+    "currency": "LYD",
     "today": "Today",
 
     /* Roles & statuses */
@@ -29,7 +29,7 @@ const I18N = {
     "status.Pending": "Pending", "status.Preparing": "Preparing", "status.Ready": "Ready",
     "status.Completed": "Completed", "status.Cancelled": "Cancelled",
     "type.dine-in": "Dine-in", "type.takeaway": "Takeaway",
-    "payment.cash": "Cash", "payment.card": "Card",
+    "paid.yes": "Yes", "paid.no": "No",
 
     /* Sidebar */
     "nav.overview": "Overview", "nav.dashboard": "Dashboard", "nav.reports": "Reports",
@@ -46,7 +46,7 @@ const I18N = {
     "field.email": "E-mail", "field.password": "Password", "field.fullName": "Full name",
     "field.phone": "Phone", "field.optional": "(optional)", "field.confirm": "Confirm password",
     "field.role": "Role",
-    "ph.name": "e.g. Yasmina Ali", "ph.password6": "6+ characters",
+    "ph.name": "Your full name", "ph.email": "your@email.com", "ph.phone": "09XXXXXXXX", "ph.password6": "6+ characters",
 
     /* Login */
     "login.title": "Log in · Riwaq Café",
@@ -75,7 +75,7 @@ const I18N = {
     "err.wrongLogin": "Wrong e-mail or password.",
     "err.emailTaken": "This e-mail is already registered.",
     "err.name3": "Name must be at least 3 letters.",
-    "err.phone": "Use a Libyan number like 0912345678.",
+    "err.phone": "Enter a Libyan mobile number (09XXXXXXXX).",
     "err.password6": "Password must be at least 6 characters.",
     "err.password4": "At least 4 characters.",
     "err.confirm": "Passwords do not match.",
@@ -109,6 +109,7 @@ const I18N = {
     "dash.noOrders": "No orders yet",
     "dash.noOrdersText": "When customers and cashiers place orders, today's numbers will appear here.",
     "dash.loadSample": "Load sample orders for a demo",
+    "dash.addSample": "Add sample orders",
     "kpi.todaySales": "Today's sales", "kpi.ordersToday": "Orders today", "kpi.allStatuses": "All statuses",
     "kpi.pending": "Pending orders", "kpi.pendingNote": "Pending, preparing or ready",
     "kpi.avg": "Average order", "kpi.avgNote": "Completed orders today",
@@ -135,7 +136,7 @@ const I18N = {
     "th.item": "Item", "th.qty": "Qty", "th.revenue": "Revenue",
     "csv.date": "Date", "csv.completed": "Completed orders", "csv.sales": "Sales ({cur})", "csv.total": "TOTAL",
     "csv.orderId": "Order ID", "csv.time": "Time", "csv.type": "Type", "csv.table": "Table", "csv.status": "Status",
-    "csv.payment": "Payment", "csv.items": "Items", "csv.totalCol": "Total ({cur})",
+    "csv.payment": "Paid", "csv.items": "Items", "csv.totalCol": "Total ({cur})",
   },
 
   ar: {
@@ -147,7 +148,7 @@ const I18N = {
     "status.Pending": "قيد الانتظار", "status.Preparing": "قيد التحضير", "status.Ready": "جاهز",
     "status.Completed": "مكتمل", "status.Cancelled": "ملغى",
     "type.dine-in": "داخل المقهى", "type.takeaway": "سفري",
-    "payment.cash": "نقدًا", "payment.card": "بطاقة",
+    "paid.yes": "نعم", "paid.no": "لا",
 
     "nav.overview": "نظرة عامة", "nav.dashboard": "لوحة التحكم", "nav.reports": "التقارير",
     "nav.manage": "الإدارة", "nav.users": "المستخدمون", "nav.menu": "قائمة الطعام", "nav.inventory": "المخزون",
@@ -161,7 +162,7 @@ const I18N = {
     "field.email": "البريد الإلكتروني", "field.password": "كلمة المرور", "field.fullName": "الاسم الكامل",
     "field.phone": "رقم الهاتف", "field.optional": "(اختياري)", "field.confirm": "تأكيد كلمة المرور",
     "field.role": "الدور",
-    "ph.name": "مثال: ياسمينة علي", "ph.password6": "6 أحرف أو أكثر",
+    "ph.name": "اسمك الكامل", "ph.email": "your@email.com", "ph.phone": "09XXXXXXXX", "ph.password6": "6 أحرف أو أكثر",
 
     "login.title": "تسجيل الدخول · مقهى رواق",
     "login.heading": "مرحبًا بعودتك",
@@ -187,7 +188,7 @@ const I18N = {
     "err.wrongLogin": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
     "err.emailTaken": "هذا البريد الإلكتروني مسجّل مسبقًا.",
     "err.name3": "يجب ألا يقل الاسم عن 3 أحرف.",
-    "err.phone": "أدخل رقمًا ليبيًا مثل 0912345678.",
+    "err.phone": "أدخل رقم هاتف ليبيًا بالشكل 09XXXXXXXX.",
     "err.password6": "يجب ألا تقل كلمة المرور عن 6 أحرف.",
     "err.password4": "4 أحرف على الأقل.",
     "err.confirm": "كلمتا المرور غير متطابقتين.",
@@ -219,6 +220,7 @@ const I18N = {
     "dash.noOrders": "لا توجد طلبات بعد",
     "dash.noOrdersText": "عندما يضع الزبائن والكاشير طلباتهم، ستظهر أرقام اليوم هنا.",
     "dash.loadSample": "تحميل طلبات تجريبية للعرض",
+    "dash.addSample": "إضافة طلبات تجريبية",
     "kpi.todaySales": "مبيعات اليوم", "kpi.ordersToday": "طلبات اليوم", "kpi.allStatuses": "بجميع حالاتها",
     "kpi.pending": "الطلبات المعلّقة", "kpi.pendingNote": "قيد الانتظار أو التحضير أو جاهزة",
     "kpi.avg": "متوسط الطلب", "kpi.avgNote": "الطلبات المكتملة اليوم",
@@ -244,7 +246,7 @@ const I18N = {
     "th.item": "الصنف", "th.qty": "الكمية", "th.revenue": "الإيراد",
     "csv.date": "التاريخ", "csv.completed": "الطلبات المكتملة", "csv.sales": "المبيعات ({cur})", "csv.total": "الإجمالي",
     "csv.orderId": "رقم الطلب", "csv.time": "الوقت", "csv.type": "النوع", "csv.table": "الطاولة", "csv.status": "الحالة",
-    "csv.payment": "الدفع", "csv.items": "الأصناف", "csv.totalCol": "الإجمالي ({cur})",
+    "csv.payment": "مدفوع", "csv.items": "الأصناف", "csv.totalCol": "الإجمالي ({cur})",
   },
 };
 

@@ -31,7 +31,7 @@ function setRange(preset) {
 function ordersInRange() {
   const from = fromInput.value, to = toInput.value;
   return getOrders().filter(o => {
-    const key = dayKey(o.createdAt);
+    const key = dayKey(orderTime(o));
     return key >= from && key <= to;
   });
 }
@@ -119,10 +119,10 @@ function exportOrdersCSV() {
   const rows = [[t("csv.orderId"), t("csv.date"), t("csv.time"), t("csv.type"), t("csv.table"),
                  t("csv.status"), t("csv.payment"), t("csv.items"), t("csv.totalCol", { cur })]];
   ordersInRange().forEach(o => {
-    const d = new Date(o.createdAt);
+    const d = orderTime(o);
     rows.push([
       o.id, dayKey(d), d.toTimeString().slice(0, 5), o.type ? t("type." + o.type) : "", o.table || "",
-      t("status." + o.status), o.payment ? t("payment." + o.payment) : "",
+      t("status." + o.status), t(o.paid ? "paid.yes" : "paid.no"),
       (o.items || []).map(it => `${it.qty}x ${it.name}`).join("; "),
       orderTotal(o).toFixed(2),
     ]);

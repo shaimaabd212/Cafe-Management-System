@@ -2,74 +2,48 @@
    auth.js — Login, register, logout, session and guard()
    Owner: Yasmina (M1 Administration) · shared by ALL pages
 
-   Needs: js/shared/i18n.js (loaded in <head>) for t()
+   Needs (in this order):
+     js/shared/i18n.js     (in <head>)  → t()
+     js/shared/storage.js  (Shaima)     → load(), save(), getSession(), setSession(), clearSession()
 
    How to use on any page:
      <body data-root="../">            ← path back to the project root
+     <script src="../js/shared/storage.js"></script>
      <script src="../js/shared/auth.js"></script>
      <script>guard(["manager"]);</script>   ← roles allowed on this page
 
-   localStorage keys used (shared data contract):
-     cafe_users    → array of user objects
-     cafe_session  → { userId, loginAt }
-     cafe_orders   → array of order objects (read by dashboard/reports)
+   All data goes through storage.js, so it lives under the shared keys:
+     riwaq_users    → [{ id, name, email, phone, password, role, createdAt }]
+     riwaq_session  → { id, name, role }   (same shape storage.js uses)
+     riwaq_orders   → read by dashboard.js / reports.js
    ========================================================= */
-
-const KEYS = {
-  users:   "cafe_users",
-  session: "cafe_session",
-  orders:  "cafe_orders",
-};
 
 const ROLES = ["manager", "cashier", "barista", "customer"];
 
-/* ---------- 1. Small storage helpers ---------- */
-
-// Read JSON from localStorage. If the key is missing or broken, return the fallback.
-function readData(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch (e) {
-    return fallback;
-  }
-}
-
-// Save any value as JSON in localStorage.
-function writeData(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-/* ---------- 2. Users ---------- */
-
-// The first time the site opens, create the sample staff accounts from the README.
-function seedUsers() {
-  if (readData(KEYS.users, null)) return;
-  const now = new Date().toISOString();
-  writeData(KEYS.users, [
-    { id: 1, name: "Cafe Manager", email: "manager@cafe.com", phone: "", password: "1234", role: "manager", createdAt: now },
-    { id: 2, name: "Front Cashier", email: "cashier@cafe.com", phone: "", password: "1234", role: "cashier", createdAt: now },
-    { id: 3, name: "Head Barista", email: "barista@cafe.com", phone: "", password: "1234", role: "barista", createdAt: now },
-  ]);
-}
+/* ---------- 1–2. Users (stored by storage.js under "riwaq_users") ---------- */
 
 function getUsers() {
-  return readData(KEYS.users, []);
+  return load("users", []);
 }
 
 function saveUsers(users) {
-  writeData(KEYS.users, users);
+  save("users", users);
 }
 
 // Find a user by e-mail (not case-sensitive).
 function findUserByEmail(email) {
   const target = String(email).trim().toLowerCase();
-  return getUsers().find(u => u.email.toLowerCase() === target) || null;
+  return getUsers().find(u => (u.email || "").toLowerCase() === target) || null;
 }
 
 // Next free id = biggest id + 1.
 function nextUserId() {
   return getUsers().reduce((max, u) => Math.max(max, u.id), 0) + 1;
+}
+
+// Save "who is logged in" in the same shape storage.js uses: { id, name, role }.
+function startSession(user) {
+  setSession({ id: user.id, name: user.name, role: user.role });
 }
 
 /* ---------- 3. Validation ---------- */
@@ -92,7 +66,7 @@ function login(email, password) {
   if (!user || user.password !== password) {
     return { ok: false, message: t("err.wrongLogin") };
   }
-  writeData(KEYS.session, { userId: user.id, loginAt: new Date().toISOString() });
+  startSession(user);
   return { ok: true, user };
 }
 
@@ -113,18 +87,19 @@ function register(data) {
   const users = getUsers();
   users.push(user);
   saveUsers(users);
-  writeData(KEYS.session, { userId: user.id, loginAt: new Date().toISOString() });
+  startSession(user);
   return { ok: true, user };
 }
 
+// The full user record of whoever is logged in (null if nobody, or if the account was deleted).
 function getCurrentUser() {
-  const session = readData(KEYS.session, null);
+  const session = getSession();
   if (!session) return null;
-  return getUsers().find(u => u.id === session.userId) || null;
+  return getUsers().find(u => u.id === session.id) || null;
 }
 
 function logout() {
-  localStorage.removeItem(KEYS.session);
+  clearSession();
   window.location.href = rootPath() + "login.html";
 }
 
@@ -152,7 +127,6 @@ function homeFor(role) {
     - Role not allowed here → go to that role's home page.
     - The manager may open every page.                       */
 function guard(allowedRoles) {
-  seedUsers();
   const user = getCurrentUser();
   if (!user) {
     const back = encodeURIComponent(window.location.pathname);
@@ -205,7 +179,6 @@ function showAlert(box, message, type) {
 function initLoginPage() {
   const form = document.getElementById("login-form");
   if (!form) return;
-  seedUsers();
 
   // Already logged in? Go straight to the right home page.
   const current = getCurrentUser();
@@ -252,7 +225,6 @@ function initLoginPage() {
 function initRegisterPage() {
   const form = document.getElementById("register-form");
   if (!form) return;
-  seedUsers();
 
   const f = form.elements;
   const alertBox = document.getElementById("register-alert");

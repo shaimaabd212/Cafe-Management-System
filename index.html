@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwaq Cafe | Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="index.html" class="navbar__brand">Riwaq <span lang="ar">رواق</span></a>
+    <button class="navbar__toggle" id="navToggle" aria-label="Open menu">&#9776;</button>
+    <nav id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="customer/menu.html">Menu</a>
+      <a href="customer/cart.html">Cart <span id="cartCount">0</span></a>
+      <a href="customer/my-orders.html">My Orders</a>
+      <a href="login.html" id="authLink">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__content">
+        <h1>[Your headline]</h1>
+        <p>[Short tagline about the cafe]</p>
+        <a href="customer/menu.html" class="btn">View Menu</a>
+      </div>
+      <img src="img/hero.jpg" alt="Coffee at Riwaq Cafe" class="hero__image">
+    </section>
+
+    <div class="pattern-band"></div>
+
+    <section class="section">
+      <h2>Featured Categories</h2>
+      <div class="card-grid">
+        <article class="card"><img src="img/coffee.jpg" alt="Coffee"><h3>Coffee</h3></article>
+        <article class="card"><img src="img/tea.jpg" alt="Tea"><h3>Tea</h3></article>
+        <article class="card"><img src="img/desserts.jpg" alt="Desserts"><h3>Desserts</h3></article>
+        <article class="card"><img src="img/cold.jpg" alt="Cold drinks"><h3>Cold Drinks</h3></article>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <h2>How It Works</h2>
+      <ol class="steps">
+        <li>Browse</li>
+        <li>Add to Cart</li>
+        <li>Place Order</li>
+        <li>Track</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>Visit Us</h2>
+      <p>Hours: [00:00 - 00:00]</p>
+      <p>Location: [address], Benghazi</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="pattern-band"></div>
+    <p>&copy; 2026 Riwaq Cafe &middot; [email] &middot; [phone]</p>
+  </footer>
+
+  <script src="js/shared/storage.js"></script>
+  <script src="js/shared/navbar.js"></script>
+</body>
+</html>

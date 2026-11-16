@@ -1,21 +1,147 @@
+/* ============================================================
+   Riwaq Cafe — shared design system (style.css)
+   Visual identity: Libyan heritage — Amazigh, Arab, Mediterranean
+   Used by every page. Page-specific styles stay in each page.
+   ============================================================ */
+
 :root {
-  /* Riwaq brand colours */
-  --riwaq-red:    #B3261E;  /* Ghadames red  - primary */
-  --riwaq-green:  #1F5C43;  /* Oasis green   - secondary */
-  --riwaq-blue:   #1C6BA6;  /* Sea blue      - secondary */
-  --riwaq-saffron:#E3A21A;  /* Saffron       - accent */
-  --riwaq-lime:   #FAF5EA;  /* Lime wash     - background */
-  --riwaq-sand:   #E4CDA7;  /* Sandstone     - surfaces */
-  --riwaq-clay:   #A65A34;  /* Clay          - details */
-  --riwaq-ink:    #211A17;  /* Kilim black   - text */
+  /* Brand colours */
+  --red:     #B3261E;   /* Ghadames red  - primary            */
+  --green:   #1F5C43;   /* Oasis green   - secondary          */
+  --blue:    #1C6BA6;   /* Sea blue      - links, info        */
+  --saffron: #E3A21A;   /* Saffron       - accent, highlights */
+  --lime:    #FAF5EA;   /* Lime wash     - page background    */
+  --sand:    #E4CDA7;   /* Sandstone     - borders, stripes   */
+  --clay:    #A65A34;   /* Clay          - small details      */
+  --ink:     #211A17;   /* Kilim black   - text               */
+
+  --muted:   #6A5A50;   /* secondary text  */
+  --line:    #E0D2B8;   /* light borders   */
+  --card:    #FFFDF7;   /* card background */
 
   /* Type */
-  --font-ar-display: "Reem Kufi", "Tajawal", sans-serif;
-  --font-body:       "Tajawal", system-ui, sans-serif;
-  --font-latin-display: "Marcellus", Georgia, serif;
-  --font-tifinagh:   "Noto Sans Tifinagh", sans-serif;
+  --font-head: "Marcellus", Georgia, serif;
+  --font-body: "Tajawal", system-ui, sans-serif;
 
   /* Shape */
-  --radius-arch: 999px 999px 0 0;  /* arched tops for images and cards */
-  --radius-ui: 4px;
+  --radius-arch: 999px 999px 0 0;  /* arched top for images/cards */
+  --radius-ui: 6px;
 }
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--lime);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1, h2, h3 { font-family: var(--font-head); font-weight: 400; margin: 0 0 8px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+a  { color: var(--blue); }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- Kilim band (identity divider) ---------- */
+.kilim-band {
+  height: 14px;
+  background: var(--red);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14'%3E%3Cpath d='M14 1l13 13H1z' fill='%23FAF5EA'/%3E%3Cpath d='M14 6l7 8H7z' fill='%23B3261E'/%3E%3C/svg%3E");
+  background-size: 28px 14px;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: var(--lime);
+  border-bottom: 2px solid var(--red);
+}
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.navbar .brand img { height: 56px; display: block; }
+.navbar nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.navbar nav a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: var(--radius-ui);
+}
+.navbar nav a:hover { background: var(--sand); }
+.navbar nav a.active {
+  background: var(--red);
+  color: var(--lime);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 9px 20px;
+  border-radius: var(--radius-ui);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-primary   { background: var(--saffron); color: var(--ink);  }
+.btn-secondary { background: var(--green);   color: var(--lime); }
+.btn-outline   { background: transparent;    color: var(--ink); border-color: var(--ink); }
+.btn-danger    { background: transparent;    color: var(--red); border-color: var(--red); }
+.btn:hover { filter: brightness(0.95); }
+.btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ui);
+  padding: 20px;
+}
+
+/* ---------- Status badges (order lifecycle) ---------- */
+.badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.badge-pending   { background: var(--sand);    color: var(--ink);  }
+.badge-preparing { background: var(--saffron); color: var(--ink);  }
+.badge-ready     { background: var(--blue);    color: var(--lime); }
+.badge-completed { background: var(--green);   color: var(--lime); }
+.badge-cancelled { background: var(--red);     color: var(--lime); }
+
+/* ---------- Footer ---------- */
+footer.site-footer {
+  margin-top: 48px;
+  background: var(--green);
+  color: var(--lime);
+}
+footer.site-footer .container {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+footer.site-footer a { color: var(--saffron); }
+
+/* ---------- Helpers ---------- */
+.muted { color: var(--muted); }
+.text-center { text-align: center; }

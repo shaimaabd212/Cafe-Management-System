@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="register.title">Create account · Riwaq Café</title>
+  <link rel="icon" href="img/riwaq-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Tifinagh&family=Kufam:wght@400;700&family=Noto+Kufi+Arabic:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/shared/i18n.js"></script>
+</head>
+<body data-root="">
+
+  <main class="auth-page">
+    <section class="auth-brand">
+      <img class="logo" src="img/riwaq-lockup-light.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ">
+      <h1 data-i18n-html="register.tagline">Pull up a chair <span>in the riwaq</span></h1>
+      <p data-i18n="register.text">Create your account to browse the menu, order to your table, and follow your coffee from the bar to your hands.</p>
+      <svg class="arches" viewBox="0 0 600 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path fill="#FAF5EA" d="M0 0 H600 V150 H592 V80 A52.0 52.0 0 0 0 488 80 V150 H472 V80 A52.0 52.0 0 0 0 368 80 V150 H352 V80 A52.0 52.0 0 0 0 248 80 V150 H232 V80 A52.0 52.0 0 0 0 128 80 V150 H112 V80 A52.0 52.0 0 0 0 8 80 V150 H0Z"/>
+      </svg>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-top">
+          <a class="back" href="index.html" data-i18n="back">← Back to home</a>
+          <button type="button" class="lang-btn" data-lang-toggle>العربية</button>
+        </div>
+        <h2 data-i18n="register.heading">Create your account</h2>
+        <p class="sub" data-i18n="register.sub">It takes less than a minute.</p>
+
+        <div id="register-alert" class="alert" role="alert" hidden></div>
+
+        <form id="register-form" novalidate>
+          <div class="field">
+            <label for="name" data-i18n="field.fullName">Full name</label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="e.g. Yasmina Ali" data-i18n-placeholder="ph.name">
+            <div class="error"></div>
+          </div>
+          <div class="field">
+            <label for="email" data-i18n="field.email">E-mail</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+            <div class="error"></div>
+          </div>
+          <div class="field">
+            <label for="phone"><span data-i18n="field.phone">Phone</span> <span class="opt" data-i18n="field.optional">(optional)</span></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="0912345678">
+            <div class="error"></div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="password" data-i18n="field.password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="new-password" placeholder="6+ characters" data-i18n-placeholder="ph.password6">
+              <div class="error"></div>
+            </div>
+            <div class="field">
+              <label for="confirm" data-i18n="field.confirm">Confirm password</label>
+              <input id="confirm" name="confirm" type="password" autocomplete="new-password">
+              <div class="error"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="register.submit">Create account</button>
+        </form>
+
+        <p class="switch"><span data-i18n="register.haveAccount">Already have an account?</span> <a href="login.html" data-i18n="register.login">Log in</a></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/shared/auth.js"></script>
+</body>
+</html>

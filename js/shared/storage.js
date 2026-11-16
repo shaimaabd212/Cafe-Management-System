@@ -29,14 +29,22 @@ function clearSession() { localStorage.removeItem("riwaq_session"); }
 
 // ---------- sample data (runs once, first visit) ----------
 
-function seedData() {
-  if (load("seeded", false)) return; // already done
+// Bump this number when the sample data changes, so browsers that
+// already have old sample data get the new version once.
+var SEED_VERSION = 2;
 
+function seedData() {
+  if (load("seeded", 0) >= SEED_VERSION) return; // already done
+
+  // Users log in with e-mail + password (auth.js). Same ids as before,
+  // so the sample orders below still belong to customer 4.
+  // (changed by Yasmina: e-mail login for auth.js — was username/admin123)
+  var joined = new Date().toISOString();
   save("users", [
-    { id: 1, name: "Manager",       username: "admin",   password: "admin123", role: "manager"  },
-    { id: 2, name: "Sara (Cashier)",username: "cashier", password: "1234",     role: "cashier"  },
-    { id: 3, name: "Omar (Barista)",username: "barista", password: "1234",     role: "barista"  },
-    { id: 4, name: "Aya Ali",       username: "aya",     password: "1234",     role: "customer" }
+    { id: 1, name: "Cafe Manager", email: "manager@cafe.com",  phone: "", password: "1234", role: "manager",  createdAt: joined },
+    { id: 2, name: "Front Cashier",email: "cashier@cafe.com",  phone: "", password: "1234", role: "cashier",  createdAt: joined },
+    { id: 3, name: "Head Barista", email: "barista@cafe.com",  phone: "", password: "1234", role: "barista",  createdAt: joined },
+    { id: 4, name: "Aya Ali",      email: "customer@cafe.com", phone: "", password: "1234", role: "customer", createdAt: joined }
   ]);
 
   save("menu", [
@@ -83,13 +91,10 @@ function seedData() {
   ]);
 
   save("cart", []);
-  save("seeded", true);
+  save("seeded", SEED_VERSION);
 }
 
 seedData();
 
-// TEMPORARY (until auth.js is ready): if nobody is logged in,
-// log in the sample customer so pages can be tested directly.
-if (!getSession()) {
-  setSession({ id: 4, name: "Aya Ali", role: "customer" });
-}
+// (removed by Yasmina: the TEMPORARY auto-login of the sample customer.
+//  auth.js is ready now — pages call guard() and real login is used.)

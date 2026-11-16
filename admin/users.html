@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="users.title">Users · Riwaq Admin</title>
+  <link rel="icon" href="../img/riwaq-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Tifinagh&family=Kufam:wght@400;700&family=Noto+Kufi+Arabic:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/shared/i18n.js"></script>
+</head>
+<body data-root="../">
+<div class="admin-layout">
+
+  <!-- ===== Sidebar (same on every admin page) ===== -->
+  <aside class="sidebar">
+    <a class="brand" href="dashboard.html"><img src="../img/riwaq-lockup-light.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ"></a>
+    <div class="kilim-strip"></div>
+    <nav>
+      <div class="section" data-i18n="nav.overview">Overview</div>
+      <a href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+      <a href="reports.html" data-i18n="nav.reports">Reports</a>
+      <div class="section" data-i18n="nav.manage">Manage</div>
+      <a href="users.html" class="active" data-i18n="nav.users">Users</a>
+      <a href="menu-admin.html" data-i18n="nav.menu">Menu</a>
+      <a href="inventory.html" data-i18n="nav.inventory">Inventory</a>
+      <div class="section" data-i18n="nav.operations">Operations</div>
+      <a href="../cashier/orders.html" data-i18n="nav.orders">Orders</a>
+      <a href="../barista/kitchen.html" data-i18n="nav.kitchen">Kitchen</a>
+    </nav>
+    <div class="me">
+      <div class="who" data-user-name></div>
+      <div class="role" data-user-role></div>
+      <div class="me-actions">
+        <button class="btn btn-ghost btn-sm" data-lang-toggle>العربية</button>
+        <button class="btn btn-ghost btn-sm" data-logout data-i18n="logout">Log out</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Page ===== -->
+  <main class="main">
+    <header class="page-head">
+      <div>
+        <h1 data-i18n="users.heading">Staff accounts</h1>
+        <p class="sub" data-i18n="users.sub">Add, edit, or remove the people who run the café.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="add-user-btn" data-i18n="users.add">+ Add staff</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="toolbar">
+        <div class="field grow">
+          <label for="user-search" data-i18n="users.search">Search</label>
+          <input id="user-search" type="search" placeholder="Name or e-mail" data-i18n-placeholder="users.searchPh">
+        </div>
+        <div class="field">
+          <label for="role-filter" data-i18n="field.role">Role</label>
+          <select id="role-filter">
+            <option value="staff" data-i18n="users.allStaff">All staff</option>
+            <option value="manager" data-i18n="role.manager">Manager</option>
+            <option value="cashier" data-i18n="role.cashier">Cashier</option>
+            <option value="barista" data-i18n="role.barista">Barista</option>
+            <option value="customer" data-i18n="users.customers">Customers</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th data-i18n="th.name">Name</th><th data-i18n="th.email">E-mail</th><th data-i18n="th.phone">Phone</th>
+              <th data-i18n="th.role">Role</th><th data-i18n="th.joined">Joined</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="users-body"></tbody>
+        </table>
+      </div>
+      <div id="users-empty" class="empty" hidden>
+        <div class="kilim-strip"></div>
+        <span data-i18n="users.empty">No accounts match your search.</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== Add / edit modal ===== -->
+<div class="modal-backdrop" id="user-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <div class="roofline-strip"></div>
+    <div class="modal-body">
+      <h2 id="modal-title">Add staff</h2>
+      <form id="user-form" novalidate>
+        <input type="hidden" name="id">
+        <div class="field">
+          <label for="u-name" data-i18n="field.fullName">Full name</label>
+          <input id="u-name" name="name" type="text">
+          <div class="error"></div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="u-email" data-i18n="field.email">E-mail</label>
+            <input id="u-email" name="email" type="email">
+            <div class="error"></div>
+          </div>
+          <div class="field">
+            <label for="u-phone" data-i18n="field.phone">Phone</label>
+            <input id="u-phone" name="phone" type="tel" placeholder="0912345678">
+            <div class="error"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="u-role" data-i18n="field.role">Role</label>
+            <select id="u-role" name="role">
+              <option value="cashier" data-i18n="role.cashier">Cashier</option>
+              <option value="barista" data-i18n="role.barista">Barista</option>
+              <option value="manager" data-i18n="role.manager">Manager</option>
+            </select>
+            <div class="error"></div>
+          </div>
+          <div class="field">
+            <label for="u-password" data-i18n="field.password">Password</label>
+            <input id="u-password" name="password" type="password">
+            <div class="hint" id="pw-hint">At least 4 characters.</div>
+            <div class="error"></div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="cancel-user" data-i18n="btn.cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="btn.save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/shared/auth.js"></script>
+<script>guard(["manager"]);</script>
+<script src="../js/admin/users.js"></script>
+</body>
+</html>

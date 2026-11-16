@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="dash.title">Dashboard · Riwaq Admin</title>
+  <link rel="icon" href="../img/riwaq-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Tifinagh&family=Kufam:wght@400;700&family=Noto+Kufi+Arabic:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/shared/i18n.js"></script>
+</head>
+<body data-root="../">
+<div class="admin-layout" id="dashboard">
+
+  <!-- ===== Sidebar (same on every admin page) ===== -->
+  <aside class="sidebar">
+    <a class="brand" href="dashboard.html"><img src="../img/riwaq-lockup-light.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ"></a>
+    <div class="kilim-strip"></div>
+    <nav>
+      <div class="section" data-i18n="nav.overview">Overview</div>
+      <a href="dashboard.html" class="active" data-i18n="nav.dashboard">Dashboard</a>
+      <a href="reports.html" data-i18n="nav.reports">Reports</a>
+      <div class="section" data-i18n="nav.manage">Manage</div>
+      <a href="users.html" data-i18n="nav.users">Users</a>
+      <a href="menu-admin.html" data-i18n="nav.menu">Menu</a>
+      <a href="inventory.html" data-i18n="nav.inventory">Inventory</a>
+      <div class="section" data-i18n="nav.operations">Operations</div>
+      <a href="../cashier/orders.html" data-i18n="nav.orders">Orders</a>
+      <a href="../barista/kitchen.html" data-i18n="nav.kitchen">Kitchen</a>
+    </nav>
+    <div class="me">
+      <div class="who" data-user-name></div>
+      <div class="role" data-user-role></div>
+      <div class="me-actions">
+        <button class="btn btn-ghost btn-sm" data-lang-toggle>العربية</button>
+        <button class="btn btn-ghost btn-sm" data-logout data-i18n="logout">Log out</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="page-head">
+      <div>
+        <h1><span data-i18n="dash.greeting">Good day,</span> <span data-user-name></span></h1>
+        <p class="sub" id="today-label"></p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-outline" href="reports.html" data-i18n="dash.viewReports">View reports</a>
+      </div>
+    </header>
+
+    <!-- Shown only when there are no orders yet -->
+    <section class="card empty" id="no-orders" hidden>
+      <div class="kilim-strip"></div>
+      <h3 data-i18n="dash.noOrders">No orders yet</h3>
+      <p data-i18n="dash.noOrdersText">When customers and cashiers place orders, today's numbers will appear here.</p>
+      <button class="btn btn-secondary" id="load-sample" data-i18n="dash.loadSample">Load sample orders for a demo</button>
+    </section>
+
+    <div id="dash-content">
+      <section class="kpis">
+        <div class="card kpi accent">
+          <div class="label" data-i18n="kpi.todaySales">Today's sales</div>
+          <div class="value" id="kpi-sales">0</div>
+          <div class="note" id="kpi-sales-note"></div>
+        </div>
+        <div class="card kpi info">
+          <div class="label" data-i18n="kpi.ordersToday">Orders today</div>
+          <div class="value" id="kpi-orders">0</div>
+          <div class="note" data-i18n="kpi.allStatuses">All statuses</div>
+        </div>
+        <div class="card kpi warn">
+          <div class="label" data-i18n="kpi.pending">Pending orders</div>
+          <div class="value" id="kpi-pending">0</div>
+          <div class="note" data-i18n="kpi.pendingNote">Pending, preparing or ready</div>
+        </div>
+        <div class="card kpi ok">
+          <div class="label" data-i18n="kpi.avg">Average order</div>
+          <div class="value" id="kpi-avg">0</div>
+          <div class="note" data-i18n="kpi.avgNote">Completed orders today</div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3 data-i18n="dash.chartTitle">Sales, last 7 days</h3><small id="week-total"></small></div>
+          <div class="chart-wrap">
+            <canvas id="sales-chart" data-i18n-aria="chart.week" aria-label="Bar chart of sales for the last 7 days"></canvas>
+            <div class="chart-tip" id="chart-tip"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3 data-i18n="dash.best">Best sellers</h3><small data-i18n="dash.byQty">by quantity</small></div>
+          <ul class="bars" id="best-list"></ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h3 data-i18n="dash.latest">Latest orders</h3><small><a href="../cashier/orders.html" data-i18n="dash.allOrders">All orders →</a></small></div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th data-i18n="th.order">Order</th><th data-i18n="th.time">Time</th><th data-i18n="th.where">Where</th>
+              <th data-i18n="th.items">Items</th><th data-i18n="th.status">Status</th><th class="num" data-i18n="th.total">Total</th>
+            </tr></thead>
+            <tbody id="recent-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="../js/shared/auth.js"></script>
+<script>guard(["manager"]);</script>
+<script src="../js/admin/dashboard.js"></script>
+</body>
+</html>

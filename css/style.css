@@ -1,9 +1,9 @@
 /* =====================================================
-   SHARED: tokens, base, header, footer (same on all pages)
+   SHARED: tokens, base, header, footer
    ===================================================== */
 :root {
-  --red: #A52A22;
-  --red-dark: #7E1F19;
+  --red: #9B261E;
+  --red-dark: #761C16;
   --cream: #FAF1E6;
   --sand: #EFE0CC;
   --brown: #3A2418;
@@ -130,7 +130,7 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
 }
 
 /* =====================================================
-   HOME PAGE CONTENT (index.html only)
+   HOME PAGE CONTENT
    ===================================================== */
 .hero {
   display: flex;
@@ -207,99 +207,4 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
   .card-grid, .steps { grid-template-columns: repeat(2, 1fr); }
   .hero { flex-direction: column-reverse; text-align: center; padding: 40px 24px; }
   .hero__image { width: 280px; height: 340px; border-radius: 140px 140px 0 0; }
-}
-@media (max-width: 768px) {
-  .section { padding: 48px 20px; }
-}
-@media (max-width: 480px) {
-  .hero__content h1 { font-size: 2.2rem; }
-}
-
-/* =====================================================
-   SCROLL STORY (Real photos + Libyan Pattern Background)
-   ===================================================== */
-.story { height: 500vh; position: relative; }
-
-.story__stage {
-  --cup-w: clamp(170px, 22vw, 260px);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  /* Libyan Pattern Background with dark overlay for pure white text readability */
-  background-image: linear-gradient(rgba(139, 34, 28, 0.88), rgba(139, 34, 28, 0.88)), url('../img/libyan-pattern.png');
-  background-repeat: repeat;
-  background-size: 350px;
-}
-
-.story__text {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  padding: 0 5vw;
-  text-align: center;
-  font-size: clamp(2.6rem, 10vw, 9rem);
-  line-height: 1;
-  color: var(--white);
-  transform: translate(60vw, -50%);
-  opacity: 0;
-  z-index: 1;
-}
-#storyText1 { transform: translate(0, -50%); opacity: 1; }
-
-.bean {
-  position: absolute;
-  top: 0;
-  width: clamp(34px, 5vw, 70px);
-  height: auto;
-  aspect-ratio: 3 / 4;
-  object-fit: contain;
-  z-index: 2;
-  will-change: transform;
-}
-
-.story__pour {
-  position: absolute;
-  top: 0;
-  left: calc(50% - var(--cup-w) * 0.05);
-  height: 35vh;
-  width: auto;
-  transform-origin: top;
-  transform: scaleY(0);
-  z-index: 2;
-  opacity: 0;
-}
-
-.story__cup {
-  position: absolute;
-  left: 50%;
-  bottom: 12vh;
-  width: var(--cup-w);
-  transform: translate(-50%, 80px);
-  opacity: 0;
-  z-index: 3;
-}
-
-.cup-layer {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.cup-layer--filled {
-  position: absolute;
-  top: 0;
-  left: 0;
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path 0.1s linear;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .story { height: auto; }
-  .story__stage { position: relative; height: auto; padding: 60px 20px; text-align: center; }
-  .story__text { position: static; transform: none; opacity: 1; margin-bottom: 20px; font-size: 2.4rem; color: var(--red); }
-  .bean, .story__pour { display: none; }
-  .story__cup { position: static; transform: none; opacity: 1; margin: 20px auto 0; }
-  .cup-layer--filled { clip-path: inset(0 0 0 0); }
 }

@@ -1,0 +1,229 @@
+/* =====================================================
+   SHARED: tokens, base, header, footer (same on all pages)
+   ===================================================== */
+:root {
+  --red: #A52A22;
+  --red-dark: #7E1F19;
+  --cream: #FAF1E6;
+  --sand: #EFE0CC;
+  --brown: #3A2418;
+  --white: #FFFFFF;
+
+  --font-body: "Segoe UI", Arial, sans-serif;
+  --font-heading: Georgia, serif;
+
+  --radius: 12px;
+  --max-width: 1200px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--brown);
+  line-height: 1.6;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
+
+.btn {
+  display: inline-block;
+  background: var(--red);
+  color: var(--white);
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn:hover { background: var(--red-dark); }
+
+/* ----- Header ----- */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 40px;
+  background: var(--cream);
+  border-bottom: 2px solid var(--red);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--red);
+}
+.navbar__logo { height: 92px; width: auto; }
+
+#navLinks { display: flex; align-items: center; gap: 28px; }
+#navLinks a { font-weight: 500; }
+#navLinks a:hover,
+#navLinks a.active { color: var(--red); }
+
+#authLink {
+  background: var(--red);
+  color: var(--white);
+  padding: 8px 20px;
+  border-radius: 50px;
+}
+#authLink:hover { background: var(--red-dark); color: var(--white); }
+
+#cartCount {
+  background: var(--red);
+  color: var(--white);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 50px;
+}
+
+.navbar__toggle {
+  display: none;
+  background: none;
+  border: 2px solid var(--red);
+  color: var(--red);
+  font-size: 1.4rem;
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ----- Pattern band (drawn in code, color = var(--red)) -----
+   Thin center line, wide triangles above, small triangles below.
+   Change the height to resize it; the shapes scale with it. */
+
+/* ----- Pattern band ----- */
+.pattern-band {
+  width: 100%;
+  height: 36px;
+  background: var(--red);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='101.5' height='38' viewBox='0 0 101.5 38'%3E%3Cpath d='M12.375 16L25.375 0L38.375 16Z M63.125 16L76.125 0L89.125 16Z M0 19H101.5V22H0Z M1 38L7.25 27L13.5 38Z M15.5 38L21.75 27L28 38Z M30 38L36.25 27L42.5 38Z M44.5 38L50.75 27L57 38Z M59 38L65.25 27L71.5 38Z M73.5 38L79.75 27L86 38Z M88 38L94.25 27L100.5 38Z'/%3E%3C/svg%3E") repeat-x center / auto 100%;
+
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='101.5' height='38' viewBox='0 0 101.5 38'%3E%3Cpath d='M12.375 16L25.375 0L38.375 16Z M63.125 16L76.125 0L89.125 16Z M0 19H101.5V22H0Z M1 38L7.25 27L13.5 38Z M15.5 38L21.75 27L28 38Z M30 38L36.25 27L42.5 38Z M44.5 38L50.75 27L57 38Z M59 38L65.25 27L71.5 38Z M73.5 38L79.75 27L86 38Z M88 38L94.25 27L100.5 38Z'/%3E%3C/svg%3E") repeat-x center / auto 100%;
+}
+
+
+/* ----- Footer ----- */
+.footer {
+  background: var(--cream);
+  color: var(--brown);
+  text-align: center;
+}
+.footer p { padding: 24px 40px; font-size: 0.9rem; }
+
+/* ----- Header responsive ----- */
+@media (max-width: 768px) {
+  .navbar { padding: 12px 20px; flex-wrap: wrap; }
+  .navbar__toggle { display: block; }
+  .navbar__logo { height: 72px; }
+
+  #navLinks {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 14px;
+    padding-top: 16px;
+  }
+  #navLinks.open { display: flex; }
+}
+
+
+/* =====================================================
+   HOME PAGE CONTENT (index.html only)
+   ===================================================== */
+
+/* ----- Hero ----- */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 70px 40px;
+}
+.hero__content { flex: 1; }
+.hero__content h1 { font-size: 3rem; color: var(--red); margin-bottom: 16px; }
+.hero__content p { font-size: 1.15rem; margin-bottom: 28px; }
+.hero__image {
+  width: 380px;
+  height: 460px;
+  object-fit: cover;
+  border-radius: 190px 190px 0 0;
+  background: var(--sand);
+}
+
+/* ----- Sections ----- */
+.section { padding: 70px 40px; text-align: center; }
+.section--alt { background: var(--sand); }
+.section h2 { font-size: 2rem; color: var(--red); margin-bottom: 36px; }
+
+/* ----- Category cards ----- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-6px); }
+.card img { width: 100%; height: 180px; object-fit: cover; background: var(--sand); }
+.card h3 { padding: 16px; }
+
+/* ----- How it works ----- */
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  counter-reset: step;
+}
+.steps li {
+  counter-increment: step;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 16px;
+  font-weight: 600;
+}
+.steps li::before {
+  content: counter(step);
+  display: block;
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  font-size: 1.2rem;
+}
+
+/* ----- Home responsive ----- */
+@media (max-width: 900px) {
+  .card-grid, .steps { grid-template-columns: repeat(2, 1fr); }
+  .hero { flex-direction: column-reverse; text-align: center; padding: 40px 24px; }
+  .hero__image { width: 280px; height: 340px; border-radius: 140px 140px 0 0; }
+}
+@media (max-width: 768px) {
+  .section { padding: 48px 20px; }
+}
+@media (max-width: 480px) {
+  .hero__content h1 { font-size: 2.2rem; }
+}

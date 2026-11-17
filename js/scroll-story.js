@@ -1,145 +1,174 @@
-/* =====================================================
-   Scroll story
-   One number drives everything: progress p (0 -> 1) while
-   the sticky section scrolls. No libraries.
-
-     0.02-0.26  curtains gather to the sides
-     0.08-0.40  camera pushes in toward the doorway
-     0.30-0.50  dallah lifts and tilts
-     0.50-0.92  coffee pours, cup fills
-     0.92-0.99  dallah returns, steam rises
-   ===================================================== */
 (function () {
   const story = document.querySelector("[data-story]");
   if (!story) return;
 
   const stage = story.querySelector(".story__stage");
   const $ = (id) => story.querySelector("#" + id);
-  const cam = $("cam"), flapL = $("flapL"), flapR = $("flapR");
-  const dallahShadow = $("dallahShadow"), dallah = $("dallah"), cup = $("cup"), steam = $("steam");
-  const coffee = $("coffee"), shine = $("coffeeShine");
-  const stream = $("stream"), flow = $("flow");
-  const moon = story.querySelector(".story__moon");
+  const cam = $("cam");
+  const flapL = $("flapL");
+  const flapR = $("flapR");
+  const dallahShadow = $("dallahShadow");
+  const dallah = $("dallah");
+  const cup = $("cup");
+  const steam = $("steam");
+  const coffee = $("coffee");
+  const shine = $("coffeeShine");
+  const stream = $("stream");
+  const flow = $("flow");
   const captions = story.querySelectorAll(".story__caption");
   const hint = story.querySelector(".story__hint");
 
-  // ---- Geometry (tent image coordinates; matches the files in img/story) ----
-  const VIEW  = { cx: 600, cy: 320 };               // centre of the svg viewBox
-  const FOCUS = { x: 600, y: 470 };                 // where the camera pushes in
-  const DOOR  = { x1: 404, x2: 800 };               // doorway edges
-  const D = { px: 520, py: 563, s: 0.215,           // dallah pivot position + scale
-              pivot: [470, 780], tip: [698, 300],   // pivot + spout tip inside dallah.webp
-              lift: 75, maxTilt: 34 };
-  const C = { y: 568, s: 0.155,                     // cup base y + scale
-              ox: 1, oy: -429, rx: 196, ry: 100 };  // cup opening ellipse (cup units)
-  const STEPS = [0, 0.22, 0.5, 0.93];               // when each caption appears
+  const VIEW  = { cx: 600, cy: 360 };
+  const FOCUS = { x: 600, y: 450 };
+  const DOOR  = { x1: 420, x2: 780 };
+  const D = {
+    px: 530, py: 565, s: 0.22,
+    pivot: [-20, -40], tip: [230, -290],
+    lift: 65, maxTilt: 32
+  };
+  const C = {
+    y: 572, s: 0.16,
+    ox: 0, oy: -360, rx: 165, ry: 82
+  };
+  const STEPS = [0, 0.22, 0.5, 0.93];
 
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const seg   = (p, a, b) => clamp((p - a) / (b - a));
   const ease  = (t) => t * t * (3 - 2 * t);
   const lerp  = (a, b, t) => a + (b - a) * t;
 
-  // Spout tip in tent coordinates for a given tilt and lift
   function tipAt(deg, lift) {
-    const r = (deg * Math.PI) / 180, c = Math.cos(r), s = Math.sin(r);
-    const dx = (D.tip[0] - D.pivot[0]) * D.s, dy = (D.tip[1] - D.pivot[1]) * D.s;
-    return { x: D.px + dx * c - dy * s, y: D.py - lift + dx * s + dy * c };
+    const r = (deg * Math.PI) / 180;
+    const c = Math.cos(r);
+    const s = Math.sin(r);
+    const dx = (D.tip[0] - D.pivot[0]) * D.s;
+    const dy = (D.tip[1] - D.pivot[1]) * D.s;
+    return {
+      x: D.px + dx * c - dy * s,
+      y: D.py - lift + dx * s + dy * c
+    };
   }
 
-  // Put the cup right under the spout's final position
   const cupX = tipAt(D.maxTilt, D.lift).x - C.ox * C.s;
-  cup.setAttribute("transform", `translate(${cupX} ${C.y}) scale(${C.s})`);
-  steam.setAttribute("transform", `translate(${cupX} ${C.y}) scale(${C.s})`);
+  if (cup) cup.setAttribute("transform", `translate(${cupX.toFixed(1)} ${C.y}) scale(${C.s})`);
+  if (steam) steam.setAttribute("transform", `translate(${cupX.toFixed(1)} ${C.y}) scale(${C.s})`);
 
-  function zoomMax() { return window.innerWidth < 700 ? 2.3 : 1.75; }
+  function zoomMax() {
+    return window.innerWidth < 700 ? 1.2 : 1.15;
+  }
 
   function render(p) {
-    // 1) curtains gather to the doorway sides
-    const s = 1 - 0.88 * ease(seg(p, 0.02, 0.26));
-    flapL.setAttribute("transform", `translate(${DOOR.x1} 0) scale(${s} 1) translate(${-DOOR.x1} 0)`);
-    flapR.setAttribute("transform", `translate(${DOOR.x2} 0) scale(${s} 1) translate(${-DOOR.x2} 0)`);
+    // 1. Curtains open to the sides
+    const openAmt = ease(seg(p, 0.02, 0.26));
+    const curtainScale = lerp(1, 0.12, openAmt);
+    if (flapL) flapL.setAttribute("transform", `translate(${DOOR.x1} 0) scale(${curtainScale.toFixed(3)} 1) translate(${-DOOR.x1} 0)`);
+    if (flapR) flapR.setAttribute("transform", `translate(${DOOR.x2} 0) scale(${curtainScale.toFixed(3)} 1) translate(${-DOOR.x2} 0)`);
 
-    // 2) camera push-in
+    // 2. Subtle camera push-in (keeps tent crisp)
     const z = ease(seg(p, 0.08, 0.40));
     const sc = lerp(1, zoomMax(), z);
-    const fx = lerp(VIEW.cx, FOCUS.x, z), fy = lerp(VIEW.cy, FOCUS.y, z);
-    cam.setAttribute("transform", `translate(${VIEW.cx} ${VIEW.cy}) scale(${sc}) translate(${-fx} ${-fy})`);
+    const fx = lerp(VIEW.cx, FOCUS.x, z);
+    const fy = lerp(VIEW.cy, FOCUS.y, z);
+    if (cam) cam.setAttribute("transform", `translate(${VIEW.cx} ${VIEW.cy}) scale(${sc.toFixed(3)}) translate(${-fx.toFixed(1)} ${-fy.toFixed(1)})`);
 
-    // 3) dallah lifts, tilts, then returns
+    // 3. Dallah lifts and tilts, then returns
     const back = ease(seg(p, 0.92, 0.99));
     const lift = D.lift * ease(seg(p, 0.30, 0.40)) * (1 - back);
     const tilt = D.maxTilt * ease(seg(p, 0.36, 0.50)) * (1 - back);
-    dallah.setAttribute("transform", `translate(${D.px} ${D.py - lift}) rotate(${tilt}) scale(${D.s})`);
-    dallahShadow.setAttribute("opacity", (0.35 * (1 - lift / D.lift * 0.8)).toFixed(2));
+    if (dallah) {
+      dallah.setAttribute("transform", `translate(${D.px} ${(D.py - lift).toFixed(1)}) rotate(${tilt.toFixed(2)}) scale(${D.s})`);
+    }
+    if (dallahShadow) {
+      dallahShadow.setAttribute("opacity", (0.35 * (1 - (lift / D.lift) * 0.75)).toFixed(2));
+    }
 
-    // 4) coffee level in the cup (visible opening is an ellipse seen from above)
+    // 4. Coffee fills inside cup
     const f = ease(seg(p, 0.52, 0.92));
     const k = 0.84 + 0.14 * f;
-    const cy = C.oy + C.ry * (1.75 * (1 - f) + 0.06);
-    coffee.setAttribute("cy", cy.toFixed(1));
-    coffee.setAttribute("rx", (C.rx * k * (f > 0.01 ? 1 : 0)).toFixed(1));
-    coffee.setAttribute("ry", (C.ry * k * (f > 0.01 ? 1 : 0)).toFixed(1));
-    shine.setAttribute("cx", (C.ox - C.rx * 0.25).toFixed(1));
-    shine.setAttribute("cy", (cy - C.ry * 0.25).toFixed(1));
-    shine.setAttribute("rx", (C.rx * k * 0.4 * (f > 0.01 ? 1 : 0)).toFixed(1));
-    shine.setAttribute("ry", (C.ry * k * 0.22 * (f > 0.01 ? 1 : 0)).toFixed(1));
+    const cy = C.oy + C.ry * (1.5 * (1 - f) + 0.05);
+    const rx = f > 0.01 ? C.rx * k : 0;
+    const ry = f > 0.01 ? C.ry * k : 0;
 
-    // 5) the stream: falls from the spout to the coffee, then drains
+    if (coffee) {
+      coffee.setAttribute("cy", cy.toFixed(1));
+      coffee.setAttribute("rx", rx.toFixed(1));
+      coffee.setAttribute("ry", ry.toFixed(1));
+    }
+    if (shine) {
+      shine.setAttribute("cx", (C.ox - C.rx * 0.22).toFixed(1));
+      shine.setAttribute("cy", (cy - C.ry * 0.22).toFixed(1));
+      shine.setAttribute("rx", (rx * 0.38).toFixed(1));
+      shine.setAttribute("ry", (ry * 0.22).toFixed(1));
+    }
+
+    // 5. Pouring stream
     const tip = tipAt(tilt, lift);
-    const startY = tip.y + 3;
-    const endLocal = Math.min(cy, C.oy + C.ry * 0.35);
+    const startY = tip.y + 4;
+    const endLocal = Math.min(cy, C.oy + C.ry * 0.3);
     const surface = C.y + endLocal * C.s;
     const bottom = lerp(startY, surface, ease(seg(p, 0.48, 0.53)));
-    const top    = lerp(startY, surface, ease(seg(p, 0.90, 0.935)));
+    const top = lerp(startY, surface, ease(seg(p, 0.90, 0.935)));
     const on = p > 0.48 && p < 0.935;
+
     [stream, flow].forEach((el) => {
+      if (!el) return;
       el.setAttribute("x1", tip.x.toFixed(1));
-      el.setAttribute("x2", tip.x.toFixed(1));   // vertical stream
+      el.setAttribute("x2", tip.x.toFixed(1));
       el.setAttribute("y1", top.toFixed(1));
       el.setAttribute("y2", bottom.toFixed(1));
-      el.setAttribute("opacity", on ? 1 : 0);
+      el.setAttribute("opacity", on ? "1" : "0");
     });
 
-    // 6) steam when the cup is full
-    steam.setAttribute("opacity", seg(p, 0.93, 0.99).toFixed(2));
+    // 6. Steam
+    if (steam) steam.setAttribute("opacity", seg(p, 0.93, 0.99).toFixed(2));
 
-    // extras: moon crosses the sky, captions swap, hint fades
-    if (moon) {
-      moon.style.left = (8 + 74 * p).toFixed(1) + "%";
-      moon.style.top = (30 - 20 * Math.sin(Math.PI * p)).toFixed(1) + "%";
-    }
+    // Captions & hint
     let step = 0;
     STEPS.forEach((t, i) => { if (p >= t) step = i; });
     captions.forEach((c, i) => c.classList.toggle("is-active", i === step));
     if (hint) hint.classList.toggle("is-hidden", p > 0.03);
   }
 
-  // ----- scroll -> progress -----
-  function progress() {
-    const navH = parseFloat(getComputedStyle(stage).top) || 0;
-    const total = story.offsetHeight - stage.offsetHeight;
-    return clamp((navH - story.getBoundingClientRect().top) / total);
-  }
-  function setNavOffset() {
+  function getProgress() {
+    if (!story || !stage) return 0;
+    const rect = story.getBoundingClientRect();
     const nav = document.querySelector(".navbar");
-    story.style.setProperty("--story-nav", (nav ? nav.offsetHeight : 0) + "px");
+    const navH = nav ? nav.offsetHeight : 0;
+    const scrollable = story.offsetHeight - stage.offsetHeight;
+    if (scrollable <= 0) return 0;
+    return clamp((navH - rect.top) / scrollable);
   }
 
-  // Respect "reduce motion": show the finished scene
+  let smoothP = getProgress();
+  let ticking = false;
+
+  function update() {
+    const targetP = getProgress();
+    smoothP += (targetP - smoothP) * 0.22;
+    render(smoothP);
+
+    if (Math.abs(targetP - smoothP) > 0.001) {
+      requestAnimationFrame(update);
+    } else {
+      smoothP = targetP;
+      render(smoothP);
+      ticking = false;
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     render(1);
     return;
   }
 
-  let ticking = false;
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { render(progress()); ticking = false; });
-  }
-
-  setNavOffset();
-  render(progress());
+  render(smoothP);
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", () => { setNavOffset(); onScroll(); });
+  window.addEventListener("resize", onScroll);
 })();

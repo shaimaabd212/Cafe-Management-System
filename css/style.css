@@ -96,20 +96,14 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
   cursor: pointer;
 }
 
-/* ----- Pattern band (drawn in code, color = var(--red)) -----
-   Thin center line, wide triangles above, small triangles below.
-   Change the height to resize it; the shapes scale with it. */
-
 /* ----- Pattern band ----- */
 .pattern-band {
   width: 100%;
   height: 36px;
   background: var(--red);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='101.5' height='38' viewBox='0 0 101.5 38'%3E%3Cpath d='M12.375 16L25.375 0L38.375 16Z M63.125 16L76.125 0L89.125 16Z M0 19H101.5V22H0Z M1 38L7.25 27L13.5 38Z M15.5 38L21.75 27L28 38Z M30 38L36.25 27L42.5 38Z M44.5 38L50.75 27L57 38Z M59 38L65.25 27L71.5 38Z M73.5 38L79.75 27L86 38Z M88 38L94.25 27L100.5 38Z'/%3E%3C/svg%3E") repeat-x center / auto 100%;
-
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='101.5' height='38' viewBox='0 0 101.5 38'%3E%3Cpath d='M12.375 16L25.375 0L38.375 16Z M63.125 16L76.125 0L89.125 16Z M0 19H101.5V22H0Z M1 38L7.25 27L13.5 38Z M15.5 38L21.75 27L28 38Z M30 38L36.25 27L42.5 38Z M44.5 38L50.75 27L57 38Z M59 38L65.25 27L71.5 38Z M73.5 38L79.75 27L86 38Z M88 38L94.25 27L100.5 38Z'/%3E%3C/svg%3E") repeat-x center / auto 100%;
 }
-
 
 /* ----- Footer ----- */
 .footer {
@@ -135,12 +129,9 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
   #navLinks.open { display: flex; }
 }
 
-
 /* =====================================================
    HOME PAGE CONTENT (index.html only)
    ===================================================== */
-
-/* ----- Hero ----- */
 .hero {
   display: flex;
   align-items: center;
@@ -161,12 +152,10 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
   background: var(--sand);
 }
 
-/* ----- Sections ----- */
 .section { padding: 70px 40px; text-align: center; }
 .section--alt { background: var(--sand); }
 .section h2 { font-size: 2rem; color: var(--red); margin-bottom: 36px; }
 
-/* ----- Category cards ----- */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -185,7 +174,6 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
 .card img { width: 100%; height: 180px; object-fit: cover; background: var(--sand); }
 .card h3 { padding: 16px; }
 
-/* ----- How it works ----- */
 .steps {
   list-style: none;
   display: grid;
@@ -215,7 +203,6 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
   font-size: 1.2rem;
 }
 
-/* ----- Home responsive ----- */
 @media (max-width: 900px) {
   .card-grid, .steps { grid-template-columns: repeat(2, 1fr); }
   .hero { flex-direction: column-reverse; text-align: center; padding: 40px 24px; }
@@ -226,4 +213,93 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
 }
 @media (max-width: 480px) {
   .hero__content h1 { font-size: 2.2rem; }
+}
+
+/* =====================================================
+   SCROLL STORY (Real photos + Libyan Pattern Background)
+   ===================================================== */
+.story { height: 500vh; position: relative; }
+
+.story__stage {
+  --cup-w: clamp(170px, 22vw, 260px);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  /* Libyan Pattern Background with dark overlay for pure white text readability */
+  background-image: linear-gradient(rgba(139, 34, 28, 0.88), rgba(139, 34, 28, 0.88)), url('../img/libyan-pattern.png');
+  background-repeat: repeat;
+  background-size: 350px;
+}
+
+.story__text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  padding: 0 5vw;
+  text-align: center;
+  font-size: clamp(2.6rem, 10vw, 9rem);
+  line-height: 1;
+  color: var(--white);
+  transform: translate(60vw, -50%);
+  opacity: 0;
+  z-index: 1;
+}
+#storyText1 { transform: translate(0, -50%); opacity: 1; }
+
+.bean {
+  position: absolute;
+  top: 0;
+  width: clamp(34px, 5vw, 70px);
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  z-index: 2;
+  will-change: transform;
+}
+
+.story__pour {
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--cup-w) * 0.05);
+  height: 35vh;
+  width: auto;
+  transform-origin: top;
+  transform: scaleY(0);
+  z-index: 2;
+  opacity: 0;
+}
+
+.story__cup {
+  position: absolute;
+  left: 50%;
+  bottom: 12vh;
+  width: var(--cup-w);
+  transform: translate(-50%, 80px);
+  opacity: 0;
+  z-index: 3;
+}
+
+.cup-layer {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cup-layer--filled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 0.1s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story { height: auto; }
+  .story__stage { position: relative; height: auto; padding: 60px 20px; text-align: center; }
+  .story__text { position: static; transform: none; opacity: 1; margin-bottom: 20px; font-size: 2.4rem; color: var(--red); }
+  .bean, .story__pour { display: none; }
+  .story__cup { position: static; transform: none; opacity: 1; margin: 20px auto 0; }
+  .cup-layer--filled { clip-path: inset(0 0 0 0); }
 }

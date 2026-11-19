@@ -7,31 +7,163 @@
   <link rel="icon" href="../img/riwaq-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Tifinagh&family=Kufam:wght@400;700&family=Noto+Kufi+Arabic:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Tifinagh&family=Reem+Kufi:wght@400;500;700&family=Noto+Kufi+Arabic:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <script src="../js/shared/i18n.js"></script>
+  <style>
+    /* ---- styles only for this page ---- */
+    .menu-page { max-width: 1240px; }
+
+    /* Heading: title on one side, search on the other */
+    .menu-page > .page-head .eyebrow {
+      font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 6px;
+    }
+    .menu-page > .page-head h1 { font-size: 2.6rem; line-height: 1.1; }
+    .menu-page > .page-head .sub { max-width: 56ch; }
+    .menu-search { flex: 0 1 360px; min-width: 240px; margin-bottom: 14px; }
+    .menu-search label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+    .menu-search .box { position: relative; }
+    .menu-search svg { position: absolute; top: 13px; inset-inline-start: 14px; pointer-events: none; }
+    .menu-search input {
+      width: 100%; height: 46px; padding: 0 14px; padding-inline-start: 42px;
+      font: inherit; color: var(--ink); background: var(--card);
+      border: 1px solid #CDB48C; border-radius: var(--radius-ui);
+    }
+    .menu-search input:focus { outline: 3px solid var(--blue); outline-offset: 1px; }
+
+    /* Category pills */
+    .cat-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .cat-pills button {
+      min-height: 44px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+      font: inherit; font-weight: 500; color: var(--ink);
+      background: var(--card); border: 1px solid #CDB48C;
+    }
+    .cat-pills button .n { color: var(--muted); }
+    .cat-pills button[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: var(--lime); font-weight: 700; }
+    .cat-pills button[aria-pressed="true"] .n { color: inherit; opacity: .85; font-weight: 500; }
+    .cat-pills button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+    /* Items + order panel side by side, stacked on small screens */
+    .menu-layout { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    .menu-items { flex: 999 1 600px; min-width: 0; }
+    .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
+
+    /* Arched item card (the riwaq arch) */
+    .item-card {
+      position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      text-align: center; padding: 26px 16px 18px;
+      background: var(--card); border: 1px solid var(--line); border-radius: 130px 130px 6px 6px;
+    }
+    .item-card .art { width: 200px; height: 220px; }
+    .item-card .art svg { display: block; }
+    .item-card.sold-out .art { opacity: .45; }
+    .item-card h2 { font-size: 1.3rem; line-height: 1.2; margin: 6px 0 0; }
+    .item-card .desc { margin: 0; color: var(--muted); font-size: .9rem; min-height: 44px; }
+    .item-card .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: 8px; }
+    .item-card .price { color: var(--red); font-weight: 700; font-size: 1.1rem; }
+    .item-card .tag {
+      position: absolute; top: 18px; inset-inline-end: 18px;
+      background: var(--ink); color: var(--lime); font-size: .75rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; padding: 4px 10px; border-radius: 3px;
+    }
+    .btn-add {
+      min-height: 44px; padding: 0 18px; border: 0; border-radius: var(--radius-ui); cursor: pointer;
+      background: var(--green); color: var(--lime); font: inherit; font-weight: 700;
+    }
+    .btn-add:disabled { background: #F1E8D6; color: var(--muted); border: 1px solid #CDB48C; cursor: not-allowed; }
+    .stepper { display: flex; align-items: center; border: 1px solid var(--green); border-radius: var(--radius-ui); overflow: hidden; }
+    .stepper button {
+      width: 44px; height: 44px; border: 0; cursor: pointer;
+      font-size: 1.25rem; font-weight: 700; background: var(--card); color: var(--green);
+    }
+    .stepper button.plus { background: var(--green); color: var(--lime); }
+    .stepper .qty { min-width: 32px; text-align: center; font-weight: 700; }
+    .btn-add:focus-visible, .stepper button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+    .no-results { padding: 48px 24px; text-align: center; color: var(--muted); border: 1px dashed #CDB48C; border-radius: var(--radius-ui); }
+    .no-results .big { margin: 0 0 4px; font-family: var(--font-head); font-size: 1.4rem; color: var(--ink); }
+    .no-results p { margin: 0; }
+
+    /* "Your order" panel */
+    .order-panel {
+      flex: 1 1 300px; min-width: 0; position: sticky; top: 16px;
+      background: var(--card); border: 1px solid var(--line); border-top: 6px solid var(--red);
+      border-radius: var(--radius-ui); padding: 22px;
+    }
+    .order-panel h2 { font-size: 1.5rem; margin: 0 0 4px; }
+    .order-panel .count { margin: 0 0 16px; color: var(--muted); font-size: .9rem; }
+    .order-panel .empty-note { margin: 0 0 16px; padding: 16px; background: var(--lime); border-radius: 4px; color: var(--muted); font-size: .95rem; }
+    .order-lines { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .order-lines li { display: flex; justify-content: space-between; gap: 12px; font-size: .95rem; padding-bottom: 10px; border-bottom: 1px solid #EFE4CF; }
+    .order-lines b { color: var(--green); }
+    .order-lines .line-total { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .order-total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; }
+    .order-total .label { font-weight: 700; }
+    .order-total .value { font-family: var(--font-head); font-size: 1.6rem; color: var(--red); }
+    .go-cart {
+      display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px;
+      border-radius: var(--radius-ui); background: var(--saffron); color: var(--ink);
+      font-weight: 700; text-decoration: none;
+    }
+    .go-cart[aria-disabled="true"] { background: #E9DCC4; color: var(--muted); pointer-events: none; }
+    .go-cart:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+    .order-panel .note { margin: 14px 0 0; color: var(--muted); font-size: .82rem; }
+
+    @media (max-width: 820px) {
+      .order-panel { position: static; }
+      .menu-page > .page-head h1 { font-size: 2rem; }
+    }
+  </style>
 </head>
 <body data-root="../" data-layout="site" data-page="menu">
 <!-- Navbar + footer are added by js/shared/layout.js -->
 
-  <main class="container site-main">
+  <main class="container site-main menu-page">
     <header class="page-head">
       <div>
-        <h1 data-i18n="menu.heading">Our menu</h1>
-        <p class="sub" data-i18n="menu.sub">Hot drinks, cold drinks, sweets and food — made fresh in the riwaq.</p>
+        <div class="eyebrow" data-i18n="menu.eyebrow">Our menu</div>
+        <h1 data-i18n="menu.heading">Coffee under the arches</h1>
+        <p class="sub" data-i18n="menu.sub">Order from your table or for takeaway. All prices are in Libyan dinar (LYD).</p>
+      </div>
+      <div class="menu-search">
+        <label for="menu-search" data-i18n="menu.search">Search the menu</label>
+        <div class="box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6A5A50" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="menu-search" type="search" autocomplete="off" placeholder="Latte, croissant, cookie…" data-i18n-placeholder="ph.menuSearch">
+        </div>
       </div>
     </header>
 
-    <!-- ===== Page content (M3 · Shaima) ===== -->
-    <section class="card placeholder">
-      <div class="kilim-strip"></div>
-      <p data-i18n="layout.soon">This page is being built.</p>
-    </section>
+    <div class="cat-pills" id="cat-pills" role="group" data-i18n-aria="menu.categories" aria-label="Categories"><!-- filled by menu.js --></div>
+
+    <div class="menu-layout">
+      <section class="menu-items" data-i18n-aria="menu.items" aria-label="Menu items">
+        <div class="no-results" id="no-results" hidden>
+          <p class="big" id="no-results-title"></p>
+          <p data-i18n="menu.noResultsHint">Try another word, or pick a different category.</p>
+        </div>
+        <div class="item-grid" id="item-grid"><!-- filled by menu.js --></div>
+      </section>
+
+      <aside class="order-panel" id="order" data-i18n-aria="order.title" aria-label="Your order">
+        <h2 data-i18n="order.title">Your order</h2>
+        <p class="count" id="order-count" aria-live="polite"></p>
+        <p class="empty-note" id="order-empty" data-i18n="order.empty">Your cart is empty. Add something from the menu to start an order.</p>
+        <ul class="order-lines" id="order-lines"></ul>
+        <div class="order-total">
+          <span class="label" data-i18n="order.total">Total</span>
+          <span class="value" id="order-total">0</span>
+        </div>
+        <a class="go-cart" id="go-cart" href="cart.html"></a>
+        <p class="note" data-i18n="order.note">You choose dine-in (with your table number) or takeaway on the next step.</p>
+      </aside>
+    </div>
   </main>
 
 <script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script src="../js/shared/layout.js"></script>
-<!-- <script src="../js/customer/menu.js"></script>  ← add when the page script is ready -->
+<script src="../js/customer/menu.js"></script>
 </body>
 </html>

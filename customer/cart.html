@@ -10,11 +10,75 @@
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Tifinagh&family=Reem+Kufi:wght@400;500;700&family=Noto+Kufi+Arabic:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <script src="../js/shared/i18n.js"></script>
+  <style>
+    /* ---- styles only for this page ---- */
+    .cart-page { max-width: 1240px; }
+    .cart-layout { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    .cart-items { flex: 999 1 560px; min-width: 0; }
+
+    /* One row per cart line */
+    .cart-list { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-ui); }
+    .cart-row {
+      display: grid; grid-template-columns: 84px 1fr auto auto; align-items: center; gap: 16px;
+      padding: 16px 18px; border-bottom: 1px solid #EFE4CF;
+    }
+    .cart-row:last-child { border-bottom: 0; }
+    .cart-row .thumb { width: 84px; height: 92px; border-radius: 42px 42px 4px 4px; background: var(--lime); overflow: hidden; }
+    .cart-row .thumb svg { width: 100%; height: 100%; display: block; }
+    .cart-row h2 { font-size: 1.15rem; margin: 0 0 2px; }
+    .cart-row .unit { margin: 0; color: var(--muted); font-size: .9rem; }
+    .cart-row .line-total { font-weight: 700; color: var(--red); min-width: 70px; text-align: end; font-variant-numeric: tabular-nums; }
+    .cart-row .remove {
+      margin-top: 6px; padding: 0; border: 0; background: none; cursor: pointer;
+      font: inherit; font-size: .85rem; color: var(--muted); text-decoration: underline;
+    }
+    .cart-row .remove:hover { color: var(--red); }
+    .cart-row .remove:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+    .cart-row.unavailable .thumb { opacity: .45; }
+    .cart-row .warn { display: inline-block; margin-top: 4px; font-size: .8rem; font-weight: 700; color: var(--red-dark); }
+    .continue { display: inline-block; margin-top: 16px; font-weight: 500; }
+
+    /* Checkout panel */
+    .order-panel fieldset { border: 0; padding: 0; margin: 0 0 16px; }
+    .order-panel legend { font-weight: 700; font-size: .95rem; margin-bottom: 8px; padding: 0; }
+    .type-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .type-choice label {
+      display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center;
+      padding: 12px 8px; border: 1px solid #CDB48C; border-radius: var(--radius-ui);
+      background: var(--white); cursor: pointer; font-weight: 700;
+    }
+    .type-choice label small { font-weight: 400; color: var(--muted); font-size: .8rem; }
+    .type-choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .type-choice input:checked + label { border: 2px solid var(--green); background: #E5F0EA; color: var(--green); }
+    .type-choice input:focus-visible + label { outline: 3px solid var(--blue); outline-offset: 2px; }
+    .order-panel .field textarea {
+      width: 100%; padding: .7rem .85rem; font: 1rem var(--font-body); color: var(--ink); resize: vertical;
+      background: var(--white); border: 1.5px solid var(--line); border-radius: 8px; min-height: 70px;
+    }
+    .order-panel .field textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(179, 38, 30, .12); }
+    .place-order { width: 100%; min-height: 48px; }
+    [dir="rtl"] #table { direction: ltr; text-align: right; }   /* numbers read left-to-right */
+
+    /* Empty cart / order placed */
+    .cart-message { text-align: center; padding: 48px 24px; }
+    .cart-message .kilim-strip { width: 120px; margin: 0 auto 16px; }
+    .cart-message h2 { font-size: 1.6rem; }
+    .cart-message p { color: var(--muted); margin: 0 auto 20px; max-width: 46ch; }
+    .cart-message .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .cart-message .order-no { font-family: var(--font-head); font-size: 2.4rem; color: var(--red); margin: 4px 0 8px; }
+
+    @media (max-width: 560px) {
+      .cart-row { grid-template-columns: 64px 1fr auto; gap: 12px; }
+      .cart-row .thumb { width: 64px; height: 70px; }
+      .cart-row .stepper { grid-column: 2; justify-self: start; }
+      .cart-row .line-total { grid-column: 3; grid-row: 2; }
+    }
+  </style>
 </head>
 <body data-root="../" data-layout="site" data-page="cart" data-roles="customer">
 <!-- Navbar + footer are added by js/shared/layout.js -->
 
-  <main class="container site-main">
+  <main class="container site-main cart-page">
     <header class="page-head">
       <div>
         <h1 data-i18n="cart.heading">Your cart</h1>
@@ -22,16 +86,80 @@
       </div>
     </header>
 
-    <!-- ===== Page content (M3 · Shaima) ===== -->
-    <section class="card placeholder">
+    <!-- Shown when the cart is empty -->
+    <section class="card cart-message" id="cart-empty" hidden>
       <div class="kilim-strip"></div>
-      <p data-i18n="layout.soon">This page is being built.</p>
+      <h2 data-i18n="cart.emptyTitle">Your cart is empty</h2>
+      <p data-i18n="cart.emptyText">Browse the menu and add a drink or something sweet to start an order.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="menu.html" data-i18n="cart.browse">Browse the menu</a>
+        <a class="btn btn-outline" href="my-orders.html" data-i18n="cart.myOrders">My orders</a>
+      </div>
     </section>
+
+    <!-- Shown after the order is placed -->
+    <section class="card cart-message" id="cart-done" hidden>
+      <div class="kilim-strip"></div>
+      <h2 data-i18n="cart.doneTitle">Thank you — your order is in!</h2>
+      <div class="order-no" id="done-number"></div>
+      <p id="done-text"></p>
+      <div class="actions">
+        <a class="btn btn-secondary" href="my-orders.html" data-i18n="cart.track">Track my order</a>
+        <a class="btn btn-outline" href="menu.html" data-i18n="cart.backMenu">Back to the menu</a>
+      </div>
+    </section>
+
+    <div class="cart-layout" id="cart-main" hidden>
+      <section class="cart-items" data-i18n-aria="cart.itemsLabel" aria-label="Items in your cart">
+        <ul class="cart-list" id="cart-list"><!-- filled by cart.js --></ul>
+        <a class="continue" href="menu.html" data-i18n="cart.continue">← Continue shopping</a>
+      </section>
+
+      <aside class="order-panel" data-i18n-aria="cart.checkout" aria-label="Checkout">
+        <h2 data-i18n="cart.checkout">Checkout</h2>
+        <p class="count" id="cart-count" aria-live="polite"></p>
+
+        <div id="cart-alert" class="alert" role="alert" hidden></div>
+
+        <form id="checkout-form" novalidate>
+          <fieldset>
+            <legend data-i18n="cart.howLegend">How would you like it?</legend>
+            <div class="type-choice">
+              <input type="radio" name="type" id="type-dine" value="dine-in" checked>
+              <label for="type-dine"><span data-i18n="type.dine-in">Dine-in</span><small data-i18n="cart.dineHint">We bring it to your table</small></label>
+              <input type="radio" name="type" id="type-take" value="takeaway">
+              <label for="type-take"><span data-i18n="type.takeaway">Takeaway</span><small data-i18n="cart.takeHint">Pick it up at the counter</small></label>
+            </div>
+          </fieldset>
+
+          <div class="field" id="table-field">
+            <label for="table" data-i18n="cart.table">Table number</label>
+            <input id="table" name="table" type="number" inputmode="numeric" min="1" max="50" placeholder="1–50">
+            <div class="hint" data-i18n="cart.tableHint">You'll find it on the card on your table.</div>
+            <div class="error"></div>
+          </div>
+
+          <div class="field">
+            <label for="note"><span data-i18n="cart.note">Note for the barista</span> <span class="opt" data-i18n="field.optional">(optional)</span></label>
+            <textarea id="note" name="note" maxlength="200" placeholder="Less sugar, oat milk…" data-i18n-placeholder="ph.note"></textarea>
+          </div>
+
+          <div class="order-total">
+            <span class="label" data-i18n="order.total">Total</span>
+            <span class="value" id="cart-total">0</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary place-order" id="place-order" data-i18n="cart.place">Place order</button>
+          <p class="note" data-i18n="cart.payNote">You pay at the counter when your order is ready.</p>
+        </form>
+      </aside>
+    </div>
   </main>
 
 <script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script src="../js/shared/layout.js"></script>
-<!-- <script src="../js/customer/cart.js"></script>  ← add when the page script is ready -->
+<script src="../js/shared/menu-common.js"></script>
+<script src="../js/customer/cart.js"></script>
 </body>
 </html>

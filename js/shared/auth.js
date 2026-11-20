@@ -204,10 +204,12 @@ function initLoginPage() {
     const result = login(email.value, password.value);
     if (!result.ok) { showAlert(alertBox, result.message); return; }
 
-    // Go back to the page the manager tried to open (only a path on this same site).
+    // Go back to the page the user tried to open (only a path on this same site).
+    // That page runs guard() again, so a role that may not see it is sent to its home page.
+    // (changed by Shaima: customers too, so a guest who opened the cart comes back to it)
     const next = new URLSearchParams(window.location.search).get("next");
     const safeNext = next && next.startsWith("/") && !next.startsWith("//");
-    window.location.href = safeNext && result.user.role === "manager" ? next : homeFor(result.user.role);
+    window.location.href = safeNext ? next : homeFor(result.user.role);
   });
 
   // "Try a sample account" buttons fill the form for the demo.

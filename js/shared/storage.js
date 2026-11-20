@@ -31,7 +31,7 @@ function clearSession() { localStorage.removeItem("riwaq_session"); }
 
 // Bump this number when the sample data changes, so browsers that
 // already have old sample data get the new version once.
-var SEED_VERSION = 3;
+var SEED_VERSION = 4;
 
 function seedData() {
   if (load("seeded", 0) >= SEED_VERSION) return; // already done

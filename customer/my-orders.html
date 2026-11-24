@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Orders · Riwaq Café</title>
+  <title data-i18n="myOrders.title">My Orders · Riwaq Café</title>
   <link rel="icon" href="../img/riwaq-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,6 +55,9 @@
     .order-items td.num { text-align: right; font-variant-numeric: tabular-nums; }
     .order-items tfoot td { border-bottom: none; font-weight: 700; }
     .order-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .order-note { margin: 10px 0 0; padding: 8px 12px; background: var(--lime); border-radius: 4px; font-size: .9rem; color: var(--muted); }
+    [dir="rtl"] .order-items td.num { text-align: left; }
+    [dir="rtl"] .tracker li::before { left: auto; right: -50%; }   /* line runs right-to-left */
     .empty { padding: 48px 20px; }
     .empty p { margin-top: 0; }
   </style>
@@ -65,14 +68,14 @@
   <main class="container site-main">
     <div class="page-head">
       <div>
-        <h1>My Orders</h1>
-        <p class="sub">Welcome back, <span id="hello-name"></span>. Track your orders here — the status updates as the kitchen works.</p>
+        <h1 data-i18n="myOrders.heading">My Orders</h1>
+        <p class="sub" id="welcome"></p>
       </div>
-      <div class="filter-tabs" role="group" aria-label="Filter orders">
-        <button class="active" onclick="setFilter('active', this)">Active (<span id="count-active">0</span>)</button>
-        <button onclick="setFilter('completed', this)">Completed</button>
-        <button onclick="setFilter('cancelled', this)">Cancelled</button>
-        <button onclick="setFilter('all', this)">All</button>
+      <div class="filter-tabs" role="group" aria-label="Filter orders" data-i18n-aria="myOrders.filter">
+        <button type="button" class="active" data-filter="active" aria-pressed="true"><span data-i18n="myOrders.active">Active</span> (<span id="count-active">0</span>)</button>
+        <button type="button" data-filter="completed" aria-pressed="false" data-i18n="status.Completed">Completed</button>
+        <button type="button" data-filter="cancelled" aria-pressed="false" data-i18n="status.Cancelled">Cancelled</button>
+        <button type="button" data-filter="all" aria-pressed="false" data-i18n="menu.all">All</button>
       </div>
     </div>
 
@@ -82,6 +85,7 @@
   <script src="../js/shared/storage.js"></script>
   <script src="../js/shared/auth.js"></script>
   <script src="../js/shared/layout.js"></script>
+  <script src="../js/shared/menu-common.js"></script>
   <script src="../js/customer/orders.js"></script>
 </body>
 </html>

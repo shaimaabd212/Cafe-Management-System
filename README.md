@@ -1,3 +1,10 @@
+<p align="center">
+  <img src="img/riwaq-lockup.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ logo" width="180">
+</p>
+
+<h1 align="center">Riwaq Café · رواق</h1>
+<p align="center"><em>Coffee under the arches — قهوة تحت الأقواس</em></p>
+
 # ☕ Cafe Management System
 
 A front-end web application for managing café operations — built with HTML, CSS, and vanilla JavaScript.  

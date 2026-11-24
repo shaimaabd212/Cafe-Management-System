@@ -5,7 +5,7 @@
 <h1 align="center">Riwaq Café · رواق</h1>
 <p align="center"><em>Coffee under the arches — قهوة تحت الأقواس</em></p>
 
-# ☕ Cafe Management System
+
 
 A front-end web application for managing café operations — built with HTML, CSS, and vanilla JavaScript.  
 No frameworks. No back-end. Runs entirely in the browser using `localStorage`.

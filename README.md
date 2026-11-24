@@ -121,7 +121,7 @@ cafe-management/
 
 ---
 
-## 👩 Team
+## Team
 
 | Member | Module | Responsibilities |
 |---|---|---|

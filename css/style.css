@@ -444,7 +444,8 @@ body[data-layout="site"] > main { flex: 1; width: 100%; }   /* keeps the footer 
 }
 .navbar nav .nav-count[hidden] { display: none; }
 .navbar nav a.active .nav-count { background: var(--lime); color: var(--red); }
-.navbar .nav-user { color: var(--muted); font-size: .9rem; padding: 0 4px; }
+.navbar .nav-user { display: inline-flex; align-items: center; gap: 6px; padding: 0 4px; font-size: .9rem; color: var(--ink); font-weight: 500; }
+.navbar .nav-user .badge { font-size: .72rem; padding: 2px 10px; text-transform: capitalize; }
 .navbar nav .btn { margin-inline-start: 4px; }
 .navbar nav a.btn-primary { color: var(--ink); padding: 5px 14px; }
 .navbar nav a.btn-primary:hover { background: var(--saffron); }

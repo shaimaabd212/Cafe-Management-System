@@ -31,8 +31,9 @@ function clearSession() { localStorage.removeItem("riwaq_session"); }
 
 // Bump this number when the sample data changes, so browsers that
 // already have old sample data get the new version once.
-var SEED_VERSION = 6;   // 5: removed Orange Juice + Strawberry Smoothie, added Pain au Chocolat + Lotus Cookie
-                        // 6: Mojito → Iced Americano (Shaima)
+var SEED_VERSION = 7;   // 5: removed Orange Juice + Strawberry Smoothie, added Pain au Chocolat + Lotus Cookie
+                        // 6: Mojito → Iced Americano
+                        // 7: only one sample order (Shaima)
 
 function seedData() {
   if (load("seeded", 0) >= SEED_VERSION) return; // already done
@@ -85,35 +86,17 @@ function seedData() {
     { id: 22, name: "Blueberry Cinnamon Roll", category: "rolls", price: 10, available: false, desc: "Blueberry jam and lemon glaze.", nameAr: "سينابون التوت الأزرق", descAr: "مربى التوت الأزرق وكريمة الليمون.",   art: { kind: "box", pastry: "roll", c1: "#C98A4B", c2: "#5B4A8A", drizzle: true } }
   ]);
 
-  // Sample orders for the demo customer (id 4)
-  var now = Date.now();
+  // One sample order for the demo customer (id 4), being prepared in the kitchen.
   save("orders", [
     {
       id: 1001, customerId: 4, customerName: "Aya Ali",
-      type: "dine-in", table: "5",
+      type: "dine-in", table: "5", note: "",
       items: [
-        { menuId: 9,  name: "Cappuccino",       price: 9, qty: 2 },
-        { menuId: 10, name: "Butter Croissant", price: 7, qty: 1 }
+        { menuId: 9,  name: "Cappuccino",       price: 10, qty: 2 },
+        { menuId: 10, name: "Butter Croissant", price: 10, qty: 1 }
       ],
-      total: 25, status: "Preparing",
-      placedAt: now - 9 * 60 * 1000, paid: false
-    },
-    {
-      id: 1002, customerId: 4, customerName: "Aya Ali",
-      type: "takeaway", table: "",
-      items: [ { menuId: 1, name: "Iced Coffee", price: 12, qty: 1 } ],
-      total: 12, status: "Pending",
-      placedAt: now - 2 * 60 * 1000, paid: false
-    },
-    {
-      id: 1000, customerId: 4, customerName: "Aya Ali",
-      type: "dine-in", table: "3",
-      items: [
-        { menuId: 8,  name: "Espresso",         price: 6, qty: 2 },
-        { menuId: 15, name: "Red Velvet Cookie", price: 7, qty: 2 }
-      ],
-      total: 26, status: "Completed",
-      placedAt: now - 26 * 60 * 60 * 1000, paid: true
+      total: 30, status: "Preparing", confirmed: true,
+      placedAt: Date.now() - 9 * 60 * 1000, paid: false
     }
   ]);
 

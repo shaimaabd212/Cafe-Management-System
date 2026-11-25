@@ -141,7 +141,7 @@ function placeOrder(event) {
   var total = items.reduce(function (s, it) { return s + it.price * it.qty; }, 0);
 
   var orders = load("orders", []);
-  var id = orders.reduce(function (max, o) { return Math.max(max, Number(o.id) || 0); }, 1000) + 1;
+  var id = nextOrderId(orders);   // menu-common.js
   orders.push({
     id: id,
     customerId: user.id,
@@ -152,6 +152,7 @@ function placeOrder(event) {
     items: items,
     total: total,
     status: "Pending",
+    confirmed: false,       // the cashier confirms it on cashier/orders.html, then it goes to the kitchen
     placedAt: Date.now(),
     paid: false
   });

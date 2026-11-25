@@ -21,14 +21,7 @@ function myOrders() {
     .sort(function (a, b) { return b.placedAt - a.placedAt; }); // newest first
 }
 
-function timeAgo(ts) {
-  var mins = Math.round((Date.now() - ts) / 60000);
-  if (mins < 1)  return t("time.now");
-  if (mins < 60) return t("time.min", { n: mins });
-  var hours = Math.round(mins / 60);
-  if (hours < 24) return t("time.hours", { n: hours });
-  return new Date(ts).toLocaleDateString(getLocale());
-}
+// timeAgo() is in menu-common.js (the cashier pages use it too).
 
 function isActive(order) {
   return order.status === "Pending" || order.status === "Preparing" || order.status === "Ready";

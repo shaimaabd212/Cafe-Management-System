@@ -1,7 +1,7 @@
 /* ============================================================
    Riwaq Cafe — menu-common.js
    Helpers shared by the pages that show menu items:
-   customer/menu.html, customer/cart.html (and later the cashier pages).
+   customer/menu.html, cart.html, my-orders.html and cashier/orders.html, bill.html.
    Item photos live in img/menu/ (see img/menu/README.md).
    Owner: Shaima (M3 Front of House)
 
@@ -32,6 +32,38 @@ function getCart() { return load("cart", []); }
 function findMenuItem(menu, id) {
   for (var i = 0; i < menu.length; i++) if (menu[i].id === id) return menu[i];
   return null;
+}
+
+// ---------- orders (my-orders, cashier orders + bill) ----------
+
+// "just now", "5 min ago", "2 h ago", or the date.
+function timeAgo(ts) {
+  var mins = Math.round((Date.now() - ts) / 60000);
+  if (mins < 1)  return t("time.now");
+  if (mins < 60) return t("time.min", { n: mins });
+  var hours = Math.round(mins / 60);
+  if (hours < 24) return t("time.hours", { n: hours });
+  return new Date(ts).toLocaleDateString(getLocale());
+}
+
+// "Dine-in · Table 5" or "Takeaway"
+function orderWhere(o) {
+  return o.type === "dine-in"
+    ? t("type.dine-in") + (o.table ? " · " + t("where.table", { n: o.table }) : "")
+    : t("type.takeaway");
+}
+
+// Name of an ordered item in the current language (uses the stored name if the item was removed from the menu).
+function orderLineName(menu, line) {
+  var item = findMenuItem(menu, line.menuId);
+  return item ? itemName(item) : line.name;
+}
+
+function loadOrders() { return load("orders", []); }
+
+// Next free order number (orders start at 1001).
+function nextOrderId(orders) {
+  return orders.reduce(function (max, o) { return Math.max(max, Number(o.id) || 0); }, 1000) + 1;
 }
 
 // ---------- photo placeholder ----------

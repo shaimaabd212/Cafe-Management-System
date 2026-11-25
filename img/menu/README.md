@@ -13,7 +13,7 @@ until a photo is here, the item shows an empty arch with the Riwaq logo as a pla
 | Iced Mocha | `iced-mocha.jpg` |
 | Matcha Latte | `matcha-latte.jpg` |
 | Caramel Latte | `caramel-latte.jpg` |
-| Mojito | `mojito.jpg` |
+| Iced Americano | `iced-americano.jpg` |
 | Espresso | `espresso.jpg` |
 | Cappuccino | `cappuccino.jpg` |
 | Butter Croissant | `butter-croissant.jpg` |

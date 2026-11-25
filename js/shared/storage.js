@@ -31,7 +31,8 @@ function clearSession() { localStorage.removeItem("riwaq_session"); }
 
 // Bump this number when the sample data changes, so browsers that
 // already have old sample data get the new version once.
-var SEED_VERSION = 5;   // 5: removed Orange Juice + Strawberry Smoothie, added Pain au Chocolat + Lotus Cookie (Shaima)
+var SEED_VERSION = 6;   // 5: removed Orange Juice + Strawberry Smoothie, added Pain au Chocolat + Lotus Cookie
+                        // 6: Mojito → Iced Americano (Shaima)
 
 function seedData() {
   if (load("seeded", 0) >= SEED_VERSION) return; // already done
@@ -64,7 +65,7 @@ function seedData() {
     { id: 2,  name: "Iced Mocha",          category: "cold", price: 14, available: true, desc: "Espresso, dark chocolate and milk.", nameAr: "موكا مثلجة", descAr: "إسبريسو وشوكولاتة داكنة وحليب.",   art: { kind: "iced", top: "#8A5636", bottom: "#3B2216" } },
     { id: 3,  name: "Matcha Latte",        category: "cold", price: 15, available: true, desc: "Ceremonial matcha poured over milk.", nameAr: "ماتشا لاتيه", descAr: "ماتشا فاخرة تُسكب على الحليب.",  art: { kind: "iced", top: "#6E9B3E", bottom: "#F1EBDD" } },
     { id: 4,  name: "Caramel Latte",       category: "cold", price: 14, available: true, desc: "Espresso and caramel, layered on milk.", nameAr: "كراميل لاتيه", descAr: "إسبريسو وكراميل فوق طبقة من الحليب.", art: { kind: "iced", top: "#B86C2C", bottom: "#F0E2C8" } },
-    { id: 7,  name: "Mojito",              category: "cold", price: 16, available: true, desc: "Lime, fresh mint and soda.", nameAr: "موهيتو", descAr: "ليمون ونعناع طازج وصودا.",          art: { kind: "iced", top: "#C3DE7A", bottom: "#9CC84E" } },
+    { id: 25, name: "Iced Americano",      category: "cold", price: 10, available: true, desc: "Espresso and cold water over ice.", nameAr: "أمريكانو مثلج", descAr: "إسبريسو وماء بارد على الثلج." },
     { id: 8,  name: "Espresso",            category: "hot",  price: 6,  available: true, desc: "A short, strong single shot.", nameAr: "إسبريسو", descAr: "جرعة قصيرة وقوية.",        art: { kind: "hot", sleeve: "#1F5C43" } },
     { id: 9,  name: "Cappuccino",          category: "hot",  price: 10,  available: true, desc: "Espresso with steamed milk foam.", nameAr: "كابتشينو", descAr: "إسبريسو مع رغوة الحليب المبخّر.",    art: { kind: "hot", sleeve: "#B3261E" } },
     { id: 10, name: "Butter Croissant",    category: "bakery", price: 10,  available: true, desc: "Flaky, all-butter and baked daily.", nameAr: "كرواسون بالزبدة", descAr: "هشّ بالزبدة ويُخبز يومياً.",   art: { kind: "bag", pastry: "croissant" } },

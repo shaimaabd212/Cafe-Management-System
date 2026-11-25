@@ -21,10 +21,97 @@
     h1, h2, h3 { font-weight: 700; }
     /* Header: show the role badge only, not the user name */
     .navbar .nav-user .name { display: none; }
+    /* Arabic (Kufam) is wide, so use a slightly smaller size: 15px instead of 16px */
+    html[dir="rtl"] { font-size: 93.75%; }
+    html[dir="rtl"] body { font-size: 15px; }
   </style>
   <script src="../js/shared/i18n.js"></script>
+  <style>
+    /* ---- styles only for this page ---- */
+    .bill-layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+
+    /* The receipt (this is what gets printed) */
+    .receipt {
+      flex: 1 1 360px; max-width: 460px; position: relative;
+      background: var(--white); border: 1px solid var(--line); border-radius: 4px;
+      padding: 26px 26px 20px; box-shadow: 0 10px 30px rgba(33, 26, 23, .08);
+    }
+    .receipt .head { text-align: center; padding-bottom: 14px; border-bottom: 1px dashed #CDB48C; }
+    .receipt .head img { width: 54px; display: block; margin: 0 auto 6px; }
+    .receipt .head .cafe { font-family: var(--font-head); font-weight: 700; font-size: 1.35rem; margin: 0; }
+    .receipt .head .ar { font-family: var(--font-ar-head); color: var(--muted); margin: 0; }
+    [dir="rtl"] .receipt .head .ar { display: none; }   /* the Arabic name is already the title */
+    .receipt dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 14px 0; font-size: .92rem; }
+    .receipt dt { color: var(--muted); }
+    .receipt dd { margin: 0; text-align: end; font-weight: 600; }
+    .receipt table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+    .receipt th { text-align: start; font-size: .78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 6px 0; border-top: 1px dashed #CDB48C; border-bottom: 1px dashed #CDB48C; }
+    [dir="rtl"] .receipt th { letter-spacing: 0; }
+    .receipt td { padding: 7px 0; vertical-align: top; border-bottom: 1px dotted #E6DAC2; }
+    .receipt .num { text-align: end; white-space: nowrap; font-variant-numeric: tabular-nums; padding-inline-start: 10px; }
+    .receipt .qty { width: 1%; white-space: nowrap; color: var(--muted); }
+    .receipt th:first-child, .receipt td.qty { padding-inline-end: 12px; }
+    .receipt .grand { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; padding-top: 10px; border-top: 2px solid var(--ink); }
+    .receipt .grand span:first-child { font-weight: 700; font-size: 1.05rem; }
+    .receipt .grand .value { font-family: var(--font-head); font-size: 1.6rem; color: var(--red); font-variant-numeric: tabular-nums; }
+    .receipt .paybox { margin-top: 10px; font-size: .92rem; }
+    .receipt .paybox div { display: flex; justify-content: space-between; padding: 2px 0; }
+    .receipt .paybox span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .receipt .note { margin: 12px 0 0; font-size: .85rem; color: var(--muted); }
+    .receipt .stamp {
+      display: block; width: max-content; margin: 16px auto 0; padding: 4px 18px;
+      border: 2px solid currentColor; border-radius: 6px; transform: rotate(-4deg);
+      font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: .12em; text-transform: uppercase;
+    }
+    [dir="rtl"] .receipt .stamp { letter-spacing: 0; }
+    .stamp.paid { color: var(--green); }
+    .stamp.unpaid { color: var(--saffron); }
+    .stamp.cancelled { color: var(--red); }
+    .receipt .thanks { text-align: center; margin: 16px 0 8px; font-weight: 600; }
+    .receipt .kilim-strip { width: 120px; margin: 0 auto; }
+
+    /* Payment panel */
+    .pay-panel { flex: 1 1 300px; max-width: 420px; position: sticky; top: 24px; }
+    .pay-panel h2 { font-size: 1.4rem; margin: 0 0 4px; }
+    .pay-panel .due { display: flex; justify-content: space-between; align-items: baseline; margin: 6px 0 18px; padding: 12px 14px; background: var(--lime); border-radius: var(--radius-ui); }
+    .pay-panel .due .value { font-family: var(--font-head); font-size: 1.8rem; color: var(--red); font-variant-numeric: tabular-nums; }
+    .pay-panel fieldset { border: 0; padding: 0; margin: 0 0 16px; }
+    .pay-panel legend { font-weight: 700; font-size: .95rem; margin-bottom: 8px; padding: 0; }
+    .method { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .method input { position: absolute; opacity: 0; pointer-events: none; }
+    .method label {
+      display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; cursor: pointer;
+      padding: 12px 8px; border: 1px solid #CDB48C; border-radius: var(--radius-ui); background: var(--white); font-weight: 700;
+    }
+    .method label small { font-weight: 400; color: var(--muted); font-size: .8rem; }
+    .method input:checked + label { border: 2px solid var(--green); background: #E5F0EA; color: var(--green); }
+    .method input:focus-visible + label { outline: 3px solid var(--blue); outline-offset: 2px; }
+    .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .quick button { font: inherit; font-size: .88rem; cursor: pointer; padding: 4px 12px; border-radius: 999px; border: 1px solid #CDB48C; background: var(--card); color: var(--ink); }
+    .quick button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+    .change { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin: 4px 0 16px; }
+    .change .value { font-size: 1.3rem; color: var(--green); font-variant-numeric: tabular-nums; }
+    [dir="rtl"] #cash-given { direction: ltr; text-align: right; }
+    .pay-panel .btn { width: 100%; min-height: 46px; }
+    #print-btn { margin-top: 10px; }
+    .pay-panel .done { margin: 0 0 16px; padding: 12px 14px; border-radius: var(--radius-ui); background: #E5F0EA; color: var(--green); font-weight: 600; }
+    .pay-panel .done.cancelled { background: #FBE9E7; color: var(--red-dark); }
+
+    /* No order chosen: list of unpaid orders */
+    .choose table.data td:last-child { text-align: end; }
+
+    @media print {
+      body, .main { background: #fff !important; }
+      .main { padding: 0 !important; }
+      .main > .page-head, .pay-panel, .toast, .choose { display: none !important; }
+      .bill-layout { display: block; }
+      .receipt { max-width: 80mm; margin: 0 auto; border: 0; box-shadow: none; padding: 0; }
+      .receipt, .receipt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { margin: 8mm; }
+    }
+  </style>
 </head>
-<body data-root="../" data-layout="staff" data-page="orders" data-roles="cashier">
+<body data-root="../" data-layout="staff" data-page="orders" data-roles="cashier,manager">
 <div class="admin-layout">
   <!-- Sidebar is added here by js/shared/layout.js (links depend on the role) -->
 
@@ -37,17 +124,64 @@
       <div class="actions"><a class="btn btn-ghost" href="orders.html" data-i18n="bill.back">← Back to orders</a></div>
     </header>
 
-    <!-- ===== Page content (M3 · Shaima) ===== -->
-    <section class="card empty">
+    <!-- ===== Page content (M3 · Shaima) — filled by js/cashier/bill.js ===== -->
+
+    <!-- No ?id= in the address: pick an unpaid order -->
+    <section class="card choose" id="choose" hidden>
+      <div class="card-head"><h2 data-i18n="bill.choose">Choose an order</h2><small data-i18n="bill.chooseSub">Orders that are not paid yet.</small></div>
+      <div id="choose-list"></div>
+    </section>
+
+    <div class="bill-layout" id="bill" hidden>
+      <article class="receipt" id="receipt" aria-live="polite"><!-- the printed bill --></article>
+
+      <aside class="card pay-panel" id="pay-panel" aria-labelledby="pay-title">
+        <h2 id="pay-title" data-i18n="pay.title">Payment</h2>
+        <div id="pay-done" class="done" hidden></div>
+
+        <form id="pay-form" novalidate>
+          <div class="due"><span data-i18n="pay.due">Amount due</span><span class="value" id="pay-due">0</span></div>
+          <fieldset>
+            <legend data-i18n="pay.method">Payment method</legend>
+            <div class="method">
+              <input type="radio" name="method" id="m-cash" value="cash" checked>
+              <label for="m-cash"><span data-i18n="pay.cash">Cash</span><small data-i18n="pay.cashHint">Count the cash</small></label>
+              <input type="radio" name="method" id="m-card" value="card">
+              <label for="m-card"><span data-i18n="pay.card">Card</span><small data-i18n="pay.cardHint">Card machine</small></label>
+            </div>
+          </fieldset>
+
+          <div id="cash-part">
+            <div class="field">
+              <label for="cash-given" data-i18n="pay.received">Cash received</label>
+              <input id="cash-given" name="given" type="number" inputmode="decimal" min="0" step="0.5">
+              <div class="quick" id="quick"></div>
+              <div class="error"></div>
+            </div>
+            <div class="change"><span data-i18n="pay.change">Change to give</span><span class="value" id="change">0</span></div>
+          </div>
+
+          <button type="submit" class="btn btn-secondary" id="pay-btn" data-i18n="pay.confirm">Confirm payment &amp; print</button>
+        </form>
+
+        <button type="button" class="btn btn-outline" id="print-btn" data-i18n="pay.print">Print bill</button>
+      </aside>
+    </div>
+
+    <section class="card empty" id="not-found" hidden>
       <div class="kilim-strip"></div>
-      <p data-i18n="layout.soon">This page is being built.</p>
+      <p id="not-found-text"></p>
+      <a class="btn btn-outline" href="orders.html" data-i18n="bill.back">← Back to orders</a>
     </section>
   </main>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script src="../js/shared/layout.js"></script>
-<!-- <script src="../js/cashier/bill.js"></script>  ← add when the page script is ready -->
+<script src="../js/shared/menu-common.js"></script>
+<script src="../js/cashier/bill.js"></script>
 </body>
 </html>

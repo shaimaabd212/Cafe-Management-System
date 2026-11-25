@@ -47,16 +47,16 @@ cafe-management/
 ├── index.html                  # Home page (everyone)
 ├── login.html                  # All users
 ├── register.html               # Customer self-registration
-├── README.md
+├── README.mds
 │
 ├── customer/
-│   ├── menu.html               # Browse, filter, search
-│   ├── cart.html               # Cart and checkout
-│   └── my-orders.html          # Track order status
+│   ├── menu.html               # Browse, filter, search (Shaima)
+│   ├── cart.html               # Cart and checkout (Shaima)
+│   └── my-orders.html          # Track order status (Shaima)
 │
 ├── cashier/
-│   ├── orders.html             # Order list, walk-in orders
-│   └── bill.html               # Payment and printable receipt
+│   ├── orders.html             # Order list, walk-in orders (Shaima)
+│   └── bill.html               # Payment and printable receipt (Shaima)
 │
 ├── barista/
 │   └── kitchen.html            # Order queue: Preparing → Ready

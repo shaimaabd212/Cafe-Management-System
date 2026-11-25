@@ -6,7 +6,7 @@
 
    Needs: i18n.js → t(), getLang() · storage.js → load(), save()
           layout.js → updateCartCount(), rootPath()
-          menu-common.js → esc(), money(), itemName(), itemDesc(), getMenu(), getCart(), artSvg()
+          menu-common.js → esc(), money(), itemName(), itemDesc(), getMenu(), getCart(), itemVisual()
    Cart lines: [{ menuId, name, price, qty }]  (same shape as orders.js)
    ============================================================ */
 
@@ -76,7 +76,7 @@ function cardHtml(it, qty) {
   }
   return '<article class="item-card' + (soldOut ? " sold-out" : "") + '">' +
     (soldOut ? '<span class="tag">' + esc(t("menu.soldOut")) + "</span>" : "") +
-    '<div class="art" role="img" aria-label="' + name + '">' + artSvg(it) + "</div>" +
+    '<div class="art" role="img" aria-label="' + name + '">' + itemVisual(it) + "</div>" +
     "<h2>" + name + "</h2>" +
     '<p class="desc">' + esc(itemDesc(it)) + "</p>" +
     '<div class="foot"><span class="price">' + esc(money(it.price)) + "</span>" + action + "</div>" +

@@ -31,7 +31,7 @@ function clearSession() { localStorage.removeItem("riwaq_session"); }
 
 // Bump this number when the sample data changes, so browsers that
 // already have old sample data get the new version once.
-var SEED_VERSION = 4;
+var SEED_VERSION = 5;   // 5: removed Orange Juice + Strawberry Smoothie, added Pain au Chocolat + Lotus Cookie (Shaima)
 
 function seedData() {
   if (load("seeded", 0) >= SEED_VERSION) return; // already done
@@ -64,13 +64,12 @@ function seedData() {
     { id: 2,  name: "Iced Mocha",          category: "cold", price: 14, available: true, desc: "Espresso, dark chocolate and milk.", nameAr: "موكا مثلجة", descAr: "إسبريسو وشوكولاتة داكنة وحليب.",   art: { kind: "iced", top: "#8A5636", bottom: "#3B2216" } },
     { id: 3,  name: "Matcha Latte",        category: "cold", price: 15, available: true, desc: "Ceremonial matcha poured over milk.", nameAr: "ماتشا لاتيه", descAr: "ماتشا فاخرة تُسكب على الحليب.",  art: { kind: "iced", top: "#6E9B3E", bottom: "#F1EBDD" } },
     { id: 4,  name: "Caramel Latte",       category: "cold", price: 14, available: true, desc: "Espresso and caramel, layered on milk.", nameAr: "كراميل لاتيه", descAr: "إسبريسو وكراميل فوق طبقة من الحليب.", art: { kind: "iced", top: "#B86C2C", bottom: "#F0E2C8" } },
-    { id: 5,  name: "Orange Juice",        category: "cold", price: 10, available: true, desc: "Freshly squeezed oranges.", nameAr: "عصير برتقال", descAr: "برتقال معصور طازجاً.",           art: { kind: "iced", top: "#F4A51C", bottom: "#EE9612" } },
-    { id: 6,  name: "Strawberry Smoothie", category: "cold", price: 13, available: true, desc: "Strawberries, yoghurt and honey.", nameAr: "سموذي الفراولة", descAr: "فراولة وزبادي وعسل.",    art: { kind: "iced", top: "#D9535B", bottom: "#C8434C" } },
     { id: 7,  name: "Mojito",              category: "cold", price: 16, available: true, desc: "Lime, fresh mint and soda.", nameAr: "موهيتو", descAr: "ليمون ونعناع طازج وصودا.",          art: { kind: "iced", top: "#C3DE7A", bottom: "#9CC84E" } },
     { id: 8,  name: "Espresso",            category: "hot",  price: 6,  available: true, desc: "A short, strong single shot.", nameAr: "إسبريسو", descAr: "جرعة قصيرة وقوية.",        art: { kind: "hot", sleeve: "#1F5C43" } },
     { id: 9,  name: "Cappuccino",          category: "hot",  price: 10,  available: true, desc: "Espresso with steamed milk foam.", nameAr: "كابتشينو", descAr: "إسبريسو مع رغوة الحليب المبخّر.",    art: { kind: "hot", sleeve: "#B3261E" } },
     { id: 10, name: "Butter Croissant",    category: "bakery", price: 10,  available: true, desc: "Flaky, all-butter and baked daily.", nameAr: "كرواسون بالزبدة", descAr: "هشّ بالزبدة ويُخبز يومياً.",   art: { kind: "bag", pastry: "croissant" } },
     { id: 11, name: "Almond Croissant",    category: "bakery", price: 12,  available: true, desc: "Almond cream and toasted flakes.", nameAr: "كرواسون باللوز", descAr: "كريمة اللوز ورقائق محمّصة.",     art: { kind: "bag", pastry: "croissant", flakes: true } },
+    { id: 24, name: "Pain au Chocolat",    category: "bakery", price: 12, available: true, desc: "Flaky pastry, chocolate drizzle and almonds.", nameAr: "بان أو شوكولا", descAr: "عجينة هشّة مع صلصة الشوكولاتة واللوز.", image: "img/menu/choclate.jpg" },
     { id: 12, name: "Chocolate Loaf Cake", category: "bakery", price: 10, available: true, desc: "Moist cocoa loaf with ganache.", nameAr: "كيك الشوكولاتة", descAr: "كيك كاكاو طري مع الغاناش.",       art: { kind: "box", pastry: "cake" } },
     { id: 13, name: "Chocolate Muffin",    category: "bakery", price: 8,  available: true, desc: "Double chocolate, soft centre.", nameAr: "مافن الشوكولاتة", descAr: "شوكولاتة مضاعفة وقلب طري.",       art: { kind: "box", pastry: "muffin" } },
     { id: 14, name: "Club Sandwich",       category: "bakery", price: 15, available: true, desc: "Toasted, with chicken and fresh salad.", nameAr: "كلوب ساندويتش", descAr: "محمّص مع الدجاج والسلطة الطازجة.", art: { kind: "box", pastry: "sandwich" } },
@@ -78,6 +77,7 @@ function seedData() {
     { id: 16, name: "Matcha Cookie",       category: "cookies", price: 12, available: true, desc: "Matcha dough, white chocolate.", nameAr: "كوكيز الماتشا", descAr: "عجينة الماتشا مع الشوكولاتة البيضاء.",      art: { kind: "bag", pastry: "cookie", c1: "#7FA05A", c2: "#F5EFE3" } },
     { id: 17, name: "Chocolate Chip Cookie", category: "cookies", price: 12, available: true, desc: "Brown sugar dough, dark chips.", nameAr: "كوكيز رقائق الشوكولاتة", descAr: "عجينة السكر البني ورقائق داكنة.",    art: { kind: "bag", pastry: "cookie", c1: "#C98B4E", c2: "#3B2216" } },
     { id: 18, name: "Brown Butter Cookie", category: "cookies", price: 12, available: true, desc: "Nutty brown butter and sea salt.", nameAr: "كوكيز الزبدة البنية", descAr: "زبدة بنية بنكهة البندق وملح البحر.",    art: { kind: "bag", pastry: "cookie", c1: "#B9773E", c2: "#8A4F22" } },
+    { id: 23, name: "Lotus Cookie",        category: "cookies", price: 12, available: true, desc: "Biscoff dough with a melting Lotus centre.", nameAr: "كوكيز لوتس", descAr: "عجينة بسكويت اللوتس مع قلب من كريمة اللوتس.", image: "img/menu/lutis-cookie.jpg" },
     { id: 19, name: "Classic Cinnamon Roll",   category: "rolls", price: 9,  available: true,  desc: "Cinnamon sugar swirl.", nameAr: "سينابون كلاسيك", descAr: "لفائف القرفة والسكر.",            art: { kind: "box", pastry: "roll", c1: "#C98A4B" } },
     { id: 20, name: "Chocolate Cinnamon Roll", category: "rolls", price: 10, available: true,  desc: "Topped with chocolate drizzle.", nameAr: "سينابون بالشوكولاتة", descAr: "مغطى بصلصة الشوكولاتة.",   art: { kind: "box", pastry: "roll", c1: "#C98A4B", c2: "#4A2A1A", drizzle: true } },
     { id: 21, name: "Oreo Cinnamon Roll",      category: "rolls", price: 10, available: true,  desc: "Cream glaze and cookie crumb.", nameAr: "سينابون أوريو", descAr: "كريمة وفتات البسكويت.",    art: { kind: "box", pastry: "roll", c1: "#C98A4B", c2: "#F3ECE0", drizzle: true } },

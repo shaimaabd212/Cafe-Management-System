@@ -7,7 +7,7 @@
    Needs: i18n.js → t() · storage.js → load(), save()
           auth.js → getCurrentUser(), setFieldError(), showAlert()
           layout.js → updateCartCount()
-          menu-common.js → esc(), money(), itemName(), getMenu(), getCart(), findMenuItem(), artSvg()
+          menu-common.js → esc(), money(), itemName(), getMenu(), getCart(), findMenuItem(), itemVisual()
    Order saved: { id, customerId, customerName, type, table, note, items, total,
                   status: "Pending", placedAt, paid: false }
    ============================================================ */
@@ -46,7 +46,7 @@ function setLineQty(menuId, qty) {
 
 function rowHtml(l) {
   var name = esc(l.item ? itemName(l.item) : l.name);
-  var art = l.item ? artSvg(l.item) : "";
+  var art = l.item ? itemVisual(l.item) : "";
   var stepper = l.available
     ? '<div class="stepper">' +
         '<button type="button" data-action="dec" data-id="' + l.menuId + '" aria-label="' + esc(t("menu.removeOne", { name: name })) + '">−</button>' +

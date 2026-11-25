@@ -179,6 +179,13 @@ function initLayout() {
   const roles = body.dataset.roles ? body.dataset.roles.split(",").map(r => r.trim()) : null;
   const user = getCurrentUser();
 
+  // Customer-only pages (menu, cart, my orders): staff are sent to their own home page.
+  // Guests may still look at the menu. This also covers the manager, who may open every other page.
+  if (body.hasAttribute("data-customer-only") && user && user.role !== "customer") {
+    window.location.replace(homeFor(user.role));
+    return;
+  }
+
   if (layout === "site") renderSiteLayout(user, activePage);
   else if (layout === "staff") renderStaffLayout(user, activePage);
 

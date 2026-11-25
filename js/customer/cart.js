@@ -7,7 +7,7 @@
    Needs: i18n.js → t() · storage.js → load(), save()
           auth.js → getCurrentUser(), setFieldError(), showAlert()
           layout.js → updateCartCount()
-          menu-common.js → esc(), money(), itemName(), getMenu(), getCart(), findMenuItem(), artSvg()
+          menu-common.js → esc(), money(), itemName(), getMenu(), getCart(), findMenuItem(), itemVisual()
    Order saved: { id, customerId, customerName, type, table, note, items, total,
                   status: "Pending", placedAt, paid: false }
    ============================================================ */
@@ -46,7 +46,7 @@ function setLineQty(menuId, qty) {
 
 function rowHtml(l) {
   var name = esc(l.item ? itemName(l.item) : l.name);
-  var art = l.item ? artSvg(l.item) : "";
+  var art = l.item ? itemVisual(l.item) : "";
   var stepper = l.available
     ? '<div class="stepper">' +
         '<button type="button" data-action="dec" data-id="' + l.menuId + '" aria-label="' + esc(t("menu.removeOne", { name: name })) + '">−</button>' +
@@ -74,6 +74,7 @@ function renderCart() {
 
   if (lastOrderId !== null) {             // "thank you" screen after placing an order
     done.hidden = false; empty.hidden = true; main.hidden = true;
+    document.getElementById("place-order").textContent = t("cart.sent");
     document.getElementById("done-number").textContent = t("cart.orderNo", { id: lastOrderId });
     document.getElementById("done-text").textContent = t("cart.doneText");
     return;
@@ -107,9 +108,18 @@ function showTableField() {
 
 // ---------- placing the order ----------
 
+// Lock the button so the same order can't be sent twice.
+function lockPlaceButton() {
+  var btn = document.getElementById("place-order");
+  btn.disabled = true;
+  btn.textContent = t("cart.sent");
+  btn.removeAttribute("data-i18n");        // keep "✓ Order sent" when the language changes
+}
+
 function placeOrder(event) {
   event.preventDefault();
   var form = event.target;
+  if (lastOrderId !== null || document.getElementById("place-order").disabled) return;   // already sent
   var alertBox = document.getElementById("cart-alert");
   var lines = cartLines();
   var user = getCurrentUser();
@@ -141,7 +151,7 @@ function placeOrder(event) {
   var total = items.reduce(function (s, it) { return s + it.price * it.qty; }, 0);
 
   var orders = load("orders", []);
-  var id = orders.reduce(function (max, o) { return Math.max(max, Number(o.id) || 0); }, 1000) + 1;
+  var id = nextOrderId(orders);   // menu-common.js
   orders.push({
     id: id,
     customerId: user.id,
@@ -152,6 +162,7 @@ function placeOrder(event) {
     items: items,
     total: total,
     status: "Pending",
+    confirmed: false,       // the cashier confirms it on cashier/orders.html, then it goes to the kitchen
     placedAt: Date.now(),
     paid: false
   });
@@ -160,6 +171,7 @@ function placeOrder(event) {
   updateCartCount();
 
   lastOrderId = id;
+  lockPlaceButton();
   alertBox.hidden = true;
   form.reset();
   showTableField();

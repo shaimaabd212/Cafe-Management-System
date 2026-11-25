@@ -21,6 +21,8 @@
     h1, h2, h3 { font-weight: 700; }
     /* Header: show the role badge only, not the user name */
     .navbar .nav-user .name { display: none; }
+    /* "hidden" must always hide, even on boxes that set display: flex/grid */
+    [hidden] { display: none !important; }
     /* Arabic (Kufam) is wide, so use a slightly smaller size: 15px instead of 16px */
     html[dir="rtl"] { font-size: 93.75%; }
     html[dir="rtl"] body { font-size: 15px; }
@@ -90,7 +92,6 @@
       <div class="filter-tabs" role="group" aria-label="Filter orders" data-i18n-aria="myOrders.filter">
         <button type="button" class="active" data-filter="active" aria-pressed="true"><span data-i18n="myOrders.active">Active</span> (<span id="count-active">0</span>)</button>
         <button type="button" data-filter="completed" aria-pressed="false" data-i18n="status.Completed">Completed</button>
-        <button type="button" data-filter="cancelled" aria-pressed="false" data-i18n="status.Cancelled">Cancelled</button>
         <button type="button" data-filter="all" aria-pressed="false" data-i18n="menu.all">All</button>
       </div>
     </div>

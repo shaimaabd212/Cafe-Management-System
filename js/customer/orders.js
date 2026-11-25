@@ -8,8 +8,8 @@
           menu-common.js → esc(), money(), itemName(), getMenu(), findMenuItem()
    ============================================================ */
 
-var STEPS = ["Pending", "Preparing", "Ready", "Completed"];
-var currentFilter = "active"; // active | completed | cancelled | all
+var STEPS = ["Pending", "Confirmed", "Preparing", "Ready", "Completed"];
+var currentFilter = "active"; // active | completed | all   (cancelled orders only show under "All")
 
 // ---------- small helpers ----------
 
@@ -30,7 +30,6 @@ function isActive(order) {
 function matchesFilter(order) {
   if (currentFilter === "all") return true;
   if (currentFilter === "completed") return order.status === "Completed";
-  if (currentFilter === "cancelled") return order.status === "Cancelled";
   return isActive(order);   // "active" = still moving through the kitchen
 }
 
@@ -44,10 +43,11 @@ function orderedName(menu, it) {
 
 function statusTracker(order) {
   if (order.status === "Cancelled") return ""; // cancelled orders show only the badge
-  var reached = STEPS.indexOf(order.status);
+  var status = shownStatus(order);              // "Confirmed" once the cashier has confirmed it
+  var reached = STEPS.indexOf(status);
   var html = '<ol class="tracker">';
   for (var i = 0; i < STEPS.length; i++) {
-    var cls = i < reached ? "done" : i === reached ? (order.status === "Completed" ? "done" : "now") : "";
+    var cls = i < reached ? "done" : i === reached ? (status === "Completed" ? "done" : "now") : "";
     html += '<li class="' + cls + '"' + (i === reached ? ' aria-current="step"' : "") + '><span class="dot"></span>' +
       esc(t("status." + STEPS[i])) + "</li>";
   }
@@ -55,7 +55,8 @@ function statusTracker(order) {
 }
 
 function orderCard(order, menu) {
-  var badgeClass = "badge-" + order.status.toLowerCase();
+  var status = shownStatus(order);
+  var badgeClass = "badge-" + status.toLowerCase();
   var where = order.type === "dine-in"
     ? t("type.dine-in") + " · " + t("myOrders.table", { n: order.table })
     : t("type.takeaway");
@@ -69,7 +70,8 @@ function orderCard(order, menu) {
   }
 
   var buttons = "";
-  if (order.status === "Pending") {
+  // The customer can cancel only until the cashier confirms the order.
+  if (order.status === "Pending" && !order.confirmed) {
     buttons += '<button type="button" class="btn btn-danger" data-action="cancel" data-id="' + order.id + '">' + esc(t("myOrders.cancel")) + "</button>";
   }
   if (order.status === "Completed" || order.status === "Cancelled") {
@@ -81,7 +83,7 @@ function orderCard(order, menu) {
       '<header class="order-head">' +
         "<div><h2>" + esc(t("cart.orderNo", { id: order.id })) + "</h2>" +
         '<p class="muted">' + esc(where) + " · " + esc(timeAgo(order.placedAt)) + "</p></div>" +
-        '<span class="badge ' + badgeClass + '">' + esc(t("status." + order.status)) + "</span>" +
+        '<span class="badge ' + badgeClass + '">' + esc(t("status." + status)) + "</span>" +
       "</header>" +
       statusTracker(order) +
       '<table class="order-items"><tbody>' + rows + "</tbody>" +
@@ -125,16 +127,26 @@ function setFilter(name) {
   renderOrders();
 }
 
+// Ask first (popup), then cancel.
 function cancelOrder(id) {
-  var orders = load("orders", []);
-  for (var i = 0; i < orders.length; i++) {
-    // only a Pending order can still be cancelled
-    if (orders[i].id === id && orders[i].status === "Pending") {
-      orders[i].status = "Cancelled";
+  askConfirm({                                   // menu-common.js
+    title: t("cancel.title"),
+    text: t("cancel.text", { id: id }),
+    yes: t("cancel.yes"),
+    no: t("cancel.keep")
+  }).then(function (ok) {
+    if (!ok) return;
+    var orders = load("orders", []);
+    for (var i = 0; i < orders.length; i++) {
+      // only a Pending order that the cashier has not confirmed yet can be cancelled
+      if (orders[i].id === id && orders[i].status === "Pending" && !orders[i].confirmed) {
+        orders[i].status = "Cancelled";
+        orders[i].cancelledAt = Date.now();
+      }
     }
-  }
-  save("orders", orders);
-  renderOrders();
+    save("orders", orders);
+    renderOrders();
+  });
 }
 
 // Put the items of an old order back in the cart (adding to what is already there).

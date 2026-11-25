@@ -21,6 +21,8 @@
     h1, h2, h3 { font-weight: 700; }
     /* Header: show the role badge only, not the user name */
     .navbar .nav-user .name { display: none; }
+    /* "hidden" must always hide, even on boxes that set display: flex/grid */
+    [hidden] { display: none !important; }
     /* Arabic (Kufam) is wide, so use a slightly smaller size: 15px instead of 16px */
     html[dir="rtl"] { font-size: 93.75%; }
     html[dir="rtl"] body { font-size: 15px; }
@@ -68,6 +70,27 @@
     .order-card .link-btn:hover { color: var(--red); }
     .order-card .link-btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
     .orders-empty { text-align: center; padding: 40px 16px; color: var(--muted); }
+
+    /* Receipt popup (after "Confirm & print receipt"). The receipt is styled in style.css. */
+    .receipt-modal { max-width: 440px; max-height: calc(100vh - 2rem); display: flex; flex-direction: column; }
+    .receipt-modal .modal-body { overflow-y: auto; padding: 1.25rem; }
+    .receipt-modal .receipt { box-shadow: none; }
+    .receipt-modal .modal-foot { margin-top: 1rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* Printing from this page prints only the receipt */
+    @media print {
+      body { background: #fff !important; }
+      .admin-layout, .toast, #walk-modal { display: none !important; }
+      #receipt-modal { position: static; display: block; padding: 0; background: none; }
+      #receipt-modal .modal { max-width: 80mm; max-height: none; margin: 0 auto; box-shadow: none; background: #fff; }
+      #receipt-modal .roofline-strip, #receipt-modal .modal-foot { display: none; }
+      #receipt-modal .modal-body { padding: 0; overflow: visible; }
+      #receipt-modal .receipt { border: 0; padding: 0; }
+      .receipt, .receipt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { margin: 8mm; }
+    }
+    .order-card .btn.is-confirmed { border-color: var(--green); color: var(--green); background: #E5F0EA; opacity: 1; cursor: default; }
 
     /* Walk-in order form (modal) */
     .walk-modal { max-width: 640px; max-height: calc(100vh - 2rem); display: flex; flex-direction: column; }
@@ -164,6 +187,21 @@
           <button type="submit" class="btn btn-secondary" data-i18n="walk.create">Send to the kitchen</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Receipt popup: shown after "Confirm & print receipt" ===== -->
+<div class="modal-backdrop" id="receipt-modal" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+  <div class="modal receipt-modal">
+    <div class="roofline-strip"></div>
+    <div class="modal-body">
+      <h2 id="receipt-title" class="sr-only" data-i18n="rc.title">Receipt</h2>
+      <article class="receipt" id="receipt"><!-- filled by orders.js (receiptHtml in menu-common.js) --></article>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="receipt-done" data-i18n="rc.done">Done</button>
+        <button type="button" class="btn btn-primary" id="receipt-print" data-i18n="rc.printAgain">Print again</button>
+      </div>
     </div>
   </div>
 </div>

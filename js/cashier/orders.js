@@ -14,7 +14,7 @@
 
    Needs: i18n.js → t(), getLocale() · storage.js → load(), save()
           auth.js → getCurrentUser(), setFieldError()
-          menu-common.js → esc(), money(), itemName(), getMenu(), getCategories(), findMenuItem(),
+          menu-common.js → esc(), money(), itemName(), getMenu(), getCategories(), findMenuItem(), receiptHtml(), askConfirm(),
                            timeAgo(), orderWhere(), orderLineName(), loadOrders(), nextOrderId()
    ============================================================ */
 
@@ -66,8 +66,8 @@ function renderTabs(orders) {
 function badgeHtml(o) {
   var stage = stageOf(o);
   if (stage === "new") return '<span class="badge badge-new">' + esc(t("cash.newTag")) + "</span>";
-  if (stage === "kitchen") return '<span class="badge badge-preparing">' + esc(t("cash.fKitchen")) + "</span>";
-  return '<span class="badge badge-' + o.status.toLowerCase() + '">' + esc(t("status." + o.status)) + "</span>";
+  var status = shownStatus(o);                       // "Confirmed" until the kitchen starts it
+  return '<span class="badge badge-' + status.toLowerCase() + '">' + esc(t("status." + status)) + "</span>";
 }
 
 // The one next step for this order (plus a small link when needed).
@@ -97,7 +97,7 @@ function cardHtml(o, menu) {
   }).join("");
   var actions = actionsHtml(o);
 
-  return '<article class="card order-card' + (o.status === "Cancelled" ? " is-cancelled" : "") + '">' +
+  return '<article class="card order-card' + (o.status === "Cancelled" ? " is-cancelled" : "") + '" data-order="' + o.id + '">' +
     '<div class="top"><h2>#' + o.id + "</h2>" + badgeHtml(o) + "</div>" +
     '<p class="meta"><b>' + esc(o.customerName || t("cash.walkIn")) + "</b> · " + esc(orderWhere(o)) + " · " + esc(timeAgo(o.placedAt)) + "</p>" +
     '<ul class="order-lines">' + lines + "</ul>" +
@@ -126,22 +126,62 @@ function renderOrders() {
 
 // ---------- actions on an order ----------
 
+// Confirm & print: the card changes to "✓ Confirmed", the receipt pops up and the print window opens.
+// When the receipt is closed, the order moves to "In the kitchen".
 function confirmOrder(id) {
   var me = getCurrentUser();
-  updateOrder(id, function (o) {
-    o.confirmed = true;
-    o.confirmedAt = Date.now();
-    o.confirmedBy = me ? me.name : "";
-  });
+  var orders = loadOrders();
+  var o = orders.find(function (x) { return x.id === id; });
+  if (!o || stageOf(o) !== "new") return;
+  o.confirmed = true;
+  o.confirmedAt = Date.now();
+  o.confirmedBy = me ? me.name : "";
+  save("orders", orders);
+
+  var card = document.querySelector('.order-card[data-order="' + id + '"]');
+  if (card) {
+    card.querySelector(".badge").outerHTML = badgeHtml(o);
+    card.querySelector(".actions").innerHTML =
+      '<button type="button" class="btn btn-outline is-confirmed" disabled>' + esc(t("cash.confirmed")) + "</button>";
+  }
   showToast(t("cash.tConfirmed", { id: id }));
+  openReceipt(o);
+  setTimeout(function () { window.print(); }, 300);
 }
 
+// ---------- receipt popup ----------
+
+var receiptOrderId = null;
+
+function openReceipt(o) {
+  receiptOrderId = o.id;
+  document.getElementById("receipt").innerHTML = receiptHtml(o);   // menu-common.js
+  document.getElementById("receipt-modal").classList.add("open");
+  document.getElementById("receipt-done").focus();
+}
+
+function closeReceipt() {
+  var modal = document.getElementById("receipt-modal");
+  if (!modal.classList.contains("open")) return;
+  modal.classList.remove("open");
+  receiptOrderId = null;
+  renderOrders();                                    // the confirmed order moves to "In the kitchen"
+}
+
+// Cancel a new order — after the "Are you sure?" popup.
 function cancelOrder(id) {
-  if (!window.confirm(t("cash.cancelAsk", { id: id }))) return;
-  updateOrder(id, function (o) {
-    if (stageOf(o) === "new") { o.status = "Cancelled"; o.cancelledAt = Date.now(); }
+  askConfirm({                                   // menu-common.js
+    title: t("cancel.title"),
+    text: t("cancel.text", { id: id }),
+    yes: t("cancel.yes"),
+    no: t("cancel.keep")
+  }).then(function (ok) {
+    if (!ok) return;
+    updateOrder(id, function (o) {
+      if (stageOf(o) === "new") { o.status = "Cancelled"; o.cancelledAt = Date.now(); }
+    });
+    showToast(t("cash.tCancelled", { id: id }));
   });
-  showToast(t("cash.tCancelled", { id: id }));
 }
 
 function handOver(id) {
@@ -295,7 +335,16 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("walk-modal").addEventListener("click", function (e) {
     if (e.target.id === "walk-modal") closeWalkIn();          // click on the dark background
   });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeWalkIn(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { closeWalkIn(); closeReceipt(); }
+  });
+
+  // Receipt popup
+  document.getElementById("receipt-done").addEventListener("click", closeReceipt);
+  document.getElementById("receipt-print").addEventListener("click", function () { window.print(); });
+  document.getElementById("receipt-modal").addEventListener("click", function (e) {
+    if (e.target.id === "receipt-modal") closeReceipt();
+  });
   document.getElementById("walk-form").addEventListener("submit", createWalkIn);
   document.getElementById("walk-find").addEventListener("input", renderWalkItems);
   document.querySelectorAll('#walk-form input[name="type"]').forEach(function (r) {
@@ -318,6 +367,10 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("langchange", function () {
     renderOrders();
     if (document.getElementById("walk-modal").classList.contains("open")) renderWalkItems();
+    if (receiptOrderId) {
+      var o = loadOrders().find(function (x) { return x.id === receiptOrderId; });
+      if (o) document.getElementById("receipt").innerHTML = receiptHtml(o);
+    }
   });
   window.addEventListener("storage", renderOrders);   // a customer placed an order in another tab
   setInterval(renderOrders, 30000);                   // keep "5 min ago" fresh

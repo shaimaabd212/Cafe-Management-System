@@ -61,6 +61,115 @@ function orderLineName(menu, line) {
 
 function loadOrders() { return load("orders", []); }
 
+// Status to show: a Pending order the cashier has confirmed shows as "Confirmed".
+function shownStatus(o) {
+  return o.status === "Pending" && o.confirmed ? "Confirmed" : o.status;
+}
+
+// ---------- the receipt (cashier/bill.html and the popup on cashier/orders.html) ----------
+
+// "25 Nov 2026, 22:06" in the current language
+function dateTime(ts) {
+  return new Date(ts).toLocaleString(getLocale(), { dateStyle: "medium", timeStyle: "short" });
+}
+
+function round2(n) { return Math.round(n * 100) / 100; }
+
+// The printed receipt for one order (styles: .receipt in css/style.css).
+function receiptHtml(o) {
+  var menu = getMenu();
+  var me = getCurrentUser();
+  var rows = (o.items || []).map(function (line) {
+    return '<tr><td class="qty">' + line.qty + "×</td>" +
+      "<td>" + esc(orderLineName(menu, line)) + "</td>" +
+      '<td class="num">' + esc(money(round2(line.price * line.qty))) + "</td></tr>";
+  }).join("");
+
+  var stamp;
+  if (o.status === "Cancelled") stamp = '<span class="stamp cancelled">' + esc(t("rc.cancelled")) + "</span>";
+  else if (o.paid) stamp = '<span class="stamp paid">' + esc(t("rc.paid")) + "</span>";
+  else stamp = '<span class="stamp unpaid">' + esc(t("rc.unpaid")) + "</span>";
+
+  var paybox = "";
+  if (o.paid) {
+    paybox = '<div class="paybox">' +
+      "<div><span>" + esc(t("rc.method")) + "</span><span>" + esc(t(o.payMethod === "card" ? "pay.card" : "pay.cash")) + "</span></div>" +
+      (o.payMethod === "cash" && o.cashGiven != null
+        ? "<div><span>" + esc(t("rc.received")) + "</span><span>" + esc(money(o.cashGiven)) + "</span></div>" +
+          "<div><span>" + esc(t("rc.change")) + "</span><span>" + esc(money(o.change || 0)) + "</span></div>"
+        : "") +
+      "</div>";
+  }
+
+  return '<div class="head">' +
+      '<img src="' + rootPath() + 'img/riwaq-logo.svg" alt="">' +
+      '<p class="cafe">' + esc(t("rc.cafe")) + "</p>" +
+      '<p class="ar" lang="ar">رواق</p>' +
+    "</div>" +
+    "<dl>" +
+      "<dt>" + esc(t("rc.order")) + "</dt><dd>#" + o.id + "</dd>" +
+      "<dt>" + esc(t("rc.date")) + "</dt><dd>" + esc(dateTime(o.paidAt || o.placedAt)) + "</dd>" +
+      "<dt>" + esc(t("rc.customer")) + "</dt><dd>" + esc(o.customerName || t("cash.walkIn")) + "</dd>" +
+      "<dt>" + esc(t("rc.type")) + "</dt><dd>" + esc(orderWhere(o)) + "</dd>" +
+      "<dt>" + esc(t("rc.cashier")) + "</dt><dd>" + esc(o.paidBy || (me ? me.name : "")) + "</dd>" +
+    "</dl>" +
+    "<table><thead><tr><th>" + esc(t("th.qty")) + "</th><th>" + esc(t("th.item")) + '</th><th class="num">' + esc(t("rc.price")) + "</th></tr></thead>" +
+    "<tbody>" + rows + "</tbody></table>" +
+    '<div class="grand"><span>' + esc(t("rc.total")) + '</span><span class="value">' + esc(money(o.total)) + "</span></div>" +
+    paybox +
+    (o.note ? '<p class="note">' + esc(t("cash.notePrefix")) + " " + esc(o.note) + "</p>" : "") +
+    stamp +
+    '<p class="thanks">' + esc(t("rc.thanks")) + "</p>" +
+    '<div class="kilim-strip"></div>';
+}
+
+// ---------- "Are you sure?" popup ----------
+// askConfirm({ title, text, yes, no }).then(function (ok) { ... })
+// Uses the .modal styles from style.css. Escape or a click outside = "no".
+function askConfirm(opts) {
+  return new Promise(function (resolve) {
+    var before = document.activeElement;
+    var box = document.createElement("div");
+    box.className = "modal-backdrop open";
+    box.setAttribute("role", "alertdialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-labelledby", "ask-title");
+    box.setAttribute("aria-describedby", "ask-text");
+    box.innerHTML =
+      '<div class="modal ask-modal"><div class="roofline-strip"></div><div class="modal-body">' +
+      '<h2 id="ask-title">' + esc(opts.title) + "</h2>" +
+      '<p id="ask-text">' + esc(opts.text) + "</p>" +
+      '<div class="modal-foot">' +
+      '<button type="button" class="btn btn-ghost" data-answer="no">' + esc(opts.no) + "</button>" +
+      '<button type="button" class="btn btn-danger" data-answer="yes">' + esc(opts.yes) + "</button>" +
+      "</div></div></div>";
+
+    function close(answer) {
+      document.removeEventListener("keydown", onKey, true);
+      box.remove();
+      if (before && before.focus) before.focus();
+      resolve(answer);
+    }
+    function onKey(e) {
+      if (e.key === "Escape") { e.stopPropagation(); close(false); }
+      if (e.key === "Tab") {                                   // keep focus inside the popup
+        var btns = box.querySelectorAll("button");
+        var first = btns[0], last = btns[btns.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+    box.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-answer]");
+      if (btn) close(btn.dataset.answer === "yes");
+      else if (e.target === box) close(false);                 // click on the dark background
+    });
+    document.addEventListener("keydown", onKey, true);
+    document.body.appendChild(box);
+    box.querySelector('[data-answer="no"]').focus();           // the safe choice has focus
+  });
+}
+
 // Next free order number (orders start at 1001).
 function nextOrderId(orders) {
   return orders.reduce(function (max, o) { return Math.max(max, Number(o.id) || 0); }, 1000) + 1;

@@ -11,7 +11,7 @@
 
    Needs: i18n.js → t(), getLocale() · storage.js → load(), save()
           auth.js → getCurrentUser(), setFieldError()
-          menu-common.js → esc(), money(), getMenu(), orderWhere(), orderLineName(), loadOrders()
+          menu-common.js → esc(), money(), orderWhere(), loadOrders(), receiptHtml(), dateTime(), round2()
    ============================================================ */
 
 var billId = Number(new URLSearchParams(location.search).get("id")) || null;
@@ -21,12 +21,6 @@ var billId = Number(new URLSearchParams(location.search).get("id")) || null;
 function findOrder(id) {
   return loadOrders().find(function (o) { return o.id === id; }) || null;
 }
-
-function dateTime(ts) {
-  return new Date(ts).toLocaleString(getLocale(), { dateStyle: "medium", timeStyle: "short" });
-}
-
-function round2(n) { return Math.round(n * 100) / 100; }
 
 function showToast(message) {
   var toast = document.getElementById("toast");
@@ -55,60 +49,13 @@ function renderChooser() {
       return "<tr><td><strong>#" + o.id + "</strong></td>" +
         "<td>" + esc(o.customerName || t("cash.walkIn")) + "</td>" +
         "<td>" + esc(orderWhere(o)) + "</td>" +
-        '<td><span class="badge badge-' + o.status.toLowerCase() + '">' + esc(t("status." + o.status)) + "</span></td>" +
+        '<td><span class="badge badge-' + shownStatus(o).toLowerCase() + '">' + esc(t("status." + shownStatus(o))) + "</span></td>" +
         '<td class="num">' + esc(money(o.total)) + "</td>" +
         '<td><a class="btn btn-primary btn-sm" href="bill.html?id=' + o.id + '">' + esc(t("bill.open")) + "</a></td></tr>";
     }).join("") + "</tbody></table>";
 }
 
-// ---------- the receipt ----------
-
-function receiptHtml(o) {
-  var menu = getMenu();
-  var me = getCurrentUser();
-  var rows = (o.items || []).map(function (line) {
-    return '<tr><td class="qty">' + line.qty + "×</td>" +
-      "<td>" + esc(orderLineName(menu, line)) + "</td>" +
-      '<td class="num">' + esc(money(round2(line.price * line.qty))) + "</td></tr>";
-  }).join("");
-
-  var stamp;
-  if (o.status === "Cancelled") stamp = '<span class="stamp cancelled">' + esc(t("rc.cancelled")) + "</span>";
-  else if (o.paid) stamp = '<span class="stamp paid">' + esc(t("rc.paid")) + "</span>";
-  else stamp = '<span class="stamp unpaid">' + esc(t("rc.unpaid")) + "</span>";
-
-  var paybox = "";
-  if (o.paid) {
-    paybox = '<div class="paybox">' +
-      "<div><span>" + esc(t("rc.method")) + "</span><span>" + esc(t(o.payMethod === "card" ? "pay.card" : "pay.cash")) + "</span></div>" +
-      (o.payMethod === "cash" && o.cashGiven != null
-        ? "<div><span>" + esc(t("rc.received")) + "</span><span>" + esc(money(o.cashGiven)) + "</span></div>" +
-          "<div><span>" + esc(t("rc.change")) + "</span><span>" + esc(money(o.change || 0)) + "</span></div>"
-        : "") +
-      "</div>";
-  }
-
-  return '<div class="head">' +
-      '<img src="' + rootPath() + 'img/riwaq-logo.svg" alt="">' +
-      '<p class="cafe">' + esc(t("rc.cafe")) + "</p>" +
-      '<p class="ar" lang="ar">رواق</p>' +
-    "</div>" +
-    "<dl>" +
-      "<dt>" + esc(t("rc.order")) + "</dt><dd>#" + o.id + "</dd>" +
-      "<dt>" + esc(t("rc.date")) + "</dt><dd>" + esc(dateTime(o.paidAt || o.placedAt)) + "</dd>" +
-      "<dt>" + esc(t("rc.customer")) + "</dt><dd>" + esc(o.customerName || t("cash.walkIn")) + "</dd>" +
-      "<dt>" + esc(t("rc.type")) + "</dt><dd>" + esc(orderWhere(o)) + "</dd>" +
-      "<dt>" + esc(t("rc.cashier")) + "</dt><dd>" + esc(o.paidBy || (me ? me.name : "")) + "</dd>" +
-    "</dl>" +
-    "<table><thead><tr><th>" + esc(t("th.qty")) + "</th><th>" + esc(t("th.item")) + '</th><th class="num">' + esc(t("rc.price")) + "</th></tr></thead>" +
-    "<tbody>" + rows + "</tbody></table>" +
-    '<div class="grand"><span>' + esc(t("rc.total")) + '</span><span class="value">' + esc(money(o.total)) + "</span></div>" +
-    paybox +
-    (o.note ? '<p class="note">' + esc(t("cash.notePrefix")) + " " + esc(o.note) + "</p>" : "") +
-    stamp +
-    '<p class="thanks">' + esc(t("rc.thanks")) + "</p>" +
-    '<div class="kilim-strip"></div>';
-}
+// receiptHtml(), dateTime() and round2() are in menu-common.js (orders.html shows the receipt too).
 
 // ---------- the payment panel ----------
 

@@ -21,6 +21,8 @@
     h1, h2, h3 { font-weight: 700; }
     /* Header: show the role badge only, not the user name */
     .navbar .nav-user .name { display: none; }
+    /* "hidden" must always hide, even on boxes that set display: flex/grid */
+    [hidden] { display: none !important; }
     /* Arabic (Kufam) is wide, so use a slightly smaller size: 15px instead of 16px */
     html[dir="rtl"] { font-size: 93.75%; }
     html[dir="rtl"] body { font-size: 15px; }
@@ -30,45 +32,8 @@
     /* ---- styles only for this page ---- */
     .bill-layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
 
-    /* The receipt (this is what gets printed) */
-    .receipt {
-      flex: 1 1 360px; max-width: 460px; position: relative;
-      background: var(--white); border: 1px solid var(--line); border-radius: 4px;
-      padding: 26px 26px 20px; box-shadow: 0 10px 30px rgba(33, 26, 23, .08);
-    }
-    .receipt .head { text-align: center; padding-bottom: 14px; border-bottom: 1px dashed #CDB48C; }
-    .receipt .head img { width: 54px; display: block; margin: 0 auto 6px; }
-    .receipt .head .cafe { font-family: var(--font-head); font-weight: 700; font-size: 1.35rem; margin: 0; }
-    .receipt .head .ar { font-family: var(--font-ar-head); color: var(--muted); margin: 0; }
-    [dir="rtl"] .receipt .head .ar { display: none; }   /* the Arabic name is already the title */
-    .receipt dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 14px 0; font-size: .92rem; }
-    .receipt dt { color: var(--muted); }
-    .receipt dd { margin: 0; text-align: end; font-weight: 600; }
-    .receipt table { width: 100%; border-collapse: collapse; font-size: .93rem; }
-    .receipt th { text-align: start; font-size: .78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 6px 0; border-top: 1px dashed #CDB48C; border-bottom: 1px dashed #CDB48C; }
-    [dir="rtl"] .receipt th { letter-spacing: 0; }
-    .receipt td { padding: 7px 0; vertical-align: top; border-bottom: 1px dotted #E6DAC2; }
-    .receipt .num { text-align: end; white-space: nowrap; font-variant-numeric: tabular-nums; padding-inline-start: 10px; }
-    .receipt .qty { width: 1%; white-space: nowrap; color: var(--muted); }
-    .receipt th:first-child, .receipt td.qty { padding-inline-end: 12px; }
-    .receipt .grand { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; padding-top: 10px; border-top: 2px solid var(--ink); }
-    .receipt .grand span:first-child { font-weight: 700; font-size: 1.05rem; }
-    .receipt .grand .value { font-family: var(--font-head); font-size: 1.6rem; color: var(--red); font-variant-numeric: tabular-nums; }
-    .receipt .paybox { margin-top: 10px; font-size: .92rem; }
-    .receipt .paybox div { display: flex; justify-content: space-between; padding: 2px 0; }
-    .receipt .paybox span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; }
-    .receipt .note { margin: 12px 0 0; font-size: .85rem; color: var(--muted); }
-    .receipt .stamp {
-      display: block; width: max-content; margin: 16px auto 0; padding: 4px 18px;
-      border: 2px solid currentColor; border-radius: 6px; transform: rotate(-4deg);
-      font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: .12em; text-transform: uppercase;
-    }
-    [dir="rtl"] .receipt .stamp { letter-spacing: 0; }
-    .stamp.paid { color: var(--green); }
-    .stamp.unpaid { color: var(--saffron); }
-    .stamp.cancelled { color: var(--red); }
-    .receipt .thanks { text-align: center; margin: 16px 0 8px; font-weight: 600; }
-    .receipt .kilim-strip { width: 120px; margin: 0 auto; }
+    /* The receipt itself is styled in css/style.css (.receipt) — orders.html uses it too */
+    .bill-layout .receipt { flex: 1 1 360px; max-width: 460px; }
 
     /* Payment panel */
     .pay-panel { flex: 1 1 300px; max-width: 420px; position: sticky; top: 24px; }
@@ -105,7 +70,7 @@
       .main { padding: 0 !important; }
       .main > .page-head, .pay-panel, .toast, .choose { display: none !important; }
       .bill-layout { display: block; }
-      .receipt { max-width: 80mm; margin: 0 auto; border: 0; box-shadow: none; padding: 0; }
+      .bill-layout .receipt { max-width: 80mm; margin: 0 auto; border: 0; box-shadow: none; padding: 0; }
       .receipt, .receipt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       @page { margin: 8mm; }
     }

@@ -21,6 +21,8 @@
     h1, h2, h3 { font-weight: 700; }
     /* Header: show the role badge only, not the user name */
     .navbar .nav-user .name { display: none; }
+    /* "hidden" must always hide, even on boxes that set display: flex/grid */
+    [hidden] { display: none !important; }
     /* Arabic (Kufam) is wide, so use a slightly smaller size: 15px instead of 16px */
     html[dir="rtl"] { font-size: 93.75%; }
     html[dir="rtl"] body { font-size: 15px; }
@@ -79,6 +81,7 @@
     }
     .order-panel .field textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(179, 38, 30, .12); }
     .place-order { width: 100%; min-height: 48px; }
+    .place-order:disabled { background: #E5F0EA; color: var(--green); border-color: #BCD8C9; opacity: 1; }   /* "✓ Order sent" */
     [dir="rtl"] #table { direction: ltr; text-align: right; }   /* numbers read left-to-right */
 
     /* Empty cart / order placed */

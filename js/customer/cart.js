@@ -74,6 +74,7 @@ function renderCart() {
 
   if (lastOrderId !== null) {             // "thank you" screen after placing an order
     done.hidden = false; empty.hidden = true; main.hidden = true;
+    document.getElementById("place-order").textContent = t("cart.sent");
     document.getElementById("done-number").textContent = t("cart.orderNo", { id: lastOrderId });
     document.getElementById("done-text").textContent = t("cart.doneText");
     return;
@@ -107,9 +108,18 @@ function showTableField() {
 
 // ---------- placing the order ----------
 
+// Lock the button so the same order can't be sent twice.
+function lockPlaceButton() {
+  var btn = document.getElementById("place-order");
+  btn.disabled = true;
+  btn.textContent = t("cart.sent");
+  btn.removeAttribute("data-i18n");        // keep "✓ Order sent" when the language changes
+}
+
 function placeOrder(event) {
   event.preventDefault();
   var form = event.target;
+  if (lastOrderId !== null || document.getElementById("place-order").disabled) return;   // already sent
   var alertBox = document.getElementById("cart-alert");
   var lines = cartLines();
   var user = getCurrentUser();
@@ -161,6 +171,7 @@ function placeOrder(event) {
   updateCartCount();
 
   lastOrderId = id;
+  lockPlaceButton();
   alertBox.hidden = true;
   form.reset();
   showTableField();

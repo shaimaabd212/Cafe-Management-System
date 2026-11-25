@@ -89,11 +89,12 @@ function buildSiteNavbar(user, activePage) {
   if (!user) {
     account = `<a class="btn btn-primary btn-sm" href="${rootPath()}login.html" data-i18n="nav.login">${t("nav.login")}</a>`;
   } else {
-    // Staff who visit a public page get a shortcut back to their own workspace.
-    const workspace = role === "customer" ? ""
-      : `<a href="${homeFor(role)}" data-i18n="nav.workspace">${t("nav.workspace")}</a>`;
-    account = `${workspace}
-      <span class="nav-user" data-user-name></span>
+    // Who is logged in: name + a role badge (same colours as on the Users page).
+    // fillUserBox() in auth.js fills the name and the translated role.
+    account = `<span class="nav-user">
+        <span class="name" data-user-name></span>
+        <span class="badge badge-${role}" data-user-role>${t("role." + role)}</span>
+      </span>
       <button type="button" class="btn btn-outline btn-sm" data-logout data-i18n="logout">${t("logout")}</button>`;
   }
 

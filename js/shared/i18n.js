@@ -39,7 +39,7 @@ const I18N = {
 
     /* Shared layout (layout.js, Shaima): customer navbar + footer */
     "nav.main": "Main menu", "nav.home": "Home", "nav.cart": "Cart", "nav.myOrders": "My Orders",
-    "nav.login": "Log in", "nav.workspace": "My workspace",
+    "nav.login": "Log in",
     "footer.tagline": "Riwaq Café · رواق — coffee under the arches",
     "footer.course": "Intro to Web · Project 3 · Group 2",
     "layout.soon": "This page is being built.",
@@ -213,7 +213,7 @@ const I18N = {
     "logout": "تسجيل الخروج",
 
     "nav.main": "القائمة الرئيسية", "nav.home": "الرئيسية", "nav.cart": "السلة", "nav.myOrders": "طلباتي",
-    "nav.login": "تسجيل الدخول", "nav.workspace": "مساحة عملي",
+    "nav.login": "تسجيل الدخول",
     "footer.tagline": "مقهى رواق — قهوة تحت الأقواس",
     "footer.course": "مقدمة في الويب · المشروع 3 · المجموعة 2",
     "layout.soon": "هذه الصفحة قيد الإنشاء.",

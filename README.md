@@ -1,5 +1,5 @@
-
-  <img src="img/riwaq-lockup.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ logo" width="180">
+<p align="center">
+<img src="img/riwaq-lockup.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ logo" width="180">
 </p>
 
 <h1 align="center">Riwaq Café · رواق</h1>

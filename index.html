@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="home.title">Riwaq Café | Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Tajawal:wght@400;500;700&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/shared/i18n.js"></script>
+</head>
+<body data-root="" data-layout="site" data-page="home">
+
+  <main class="site-main container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-text">
+        <p class="eyebrow" data-i18n="home.eyebrow">Coffee under the arches</p>
+        <h1 data-i18n="home.heading">Riwaq Café</h1>
+        <p class="lead" data-i18n="home.lead">Order from your table, follow it live from the kitchen, and enjoy a quiet moment in the riwaq.</p>
+        <div class="hero-actions">
+          <a href="customer/menu.html" id="homePrimary" class="btn btn-primary" data-i18n="home.viewMenu">View menu</a>
+          <a href="#how-it-works" class="btn btn-outline" data-i18n="home.how">How it works</a>
+        </div>
+      </div>
+      <div class="hero-arch" aria-hidden="true">
+        <img src="img/riwaq-lockup-light.svg" alt="">
+      </div>
+    </section>
+
+    <div class="kilim-strip" aria-hidden="true"></div>
+
+    <!-- CATEGORIES -->
+    <section class="home-section">
+      <h2 data-i18n="home.catTitle">What are you in the mood for?</h2>
+      <p class="sub" data-i18n="home.catSub">Pick a category to start your order.</p>
+      <div class="cat-grid">
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-blue"></div>
+          <div class="cat-body"><h3 data-i18n="cat.cold">Cold drinks</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
+        </a>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-red"></div>
+          <div class="cat-body"><h3 data-i18n="cat.hot">Hot drinks</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
+        </a>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-clay"></div>
+          <div class="cat-body"><h3 data-i18n="cat.bakery">Bakery</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
+        </a>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-green"></div>
+          <div class="cat-body"><h3 data-i18n="cat.cookies">Cookies</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
+        </a>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-ink"></div>
+          <div class="cat-body"><h3 data-i18n="cat.rolls">Cinnamon rolls</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="home-section" id="how-it-works">
+      <h2 data-i18n="home.how">How it works</h2>
+      <p class="sub" data-i18n="home.howSub">From your table to your cup in four steps.</p>
+      <ol class="steps">
+        <li class="card"><h3 data-i18n="home.s1t">Browse</h3><p data-i18n="home.s1d">Explore the menu by category.</p></li>
+        <li class="card"><h3 data-i18n="home.s2t">Add to cart</h3><p data-i18n="home.s2d">Choose your items and quantities.</p></li>
+        <li class="card"><h3 data-i18n="home.s3t">Place order</h3><p data-i18n="home.s3d">Pick dine-in or takeaway and confirm.</p></li>
+        <li class="card"><h3 data-i18n="home.s4t">Track</h3><p data-i18n="home.s4d">Watch your order go from preparing to ready.</p></li>
+      </ol>
+    </section>
+
+    <!-- VISIT US -->
+    <section class="home-section">
+      <h2 data-i18n="home.visit">Visit us</h2>
+      <div class="visit-grid">
+        <div class="card">
+          <h3 data-i18n="home.hoursTitle">Opening hours</h3>
+          <ul class="hours">
+            <li><span data-i18n="home.daysA">Saturday – Thursday</span><span dir="ltr">[00:00 – 00:00]</span></li>
+            <li><span data-i18n="home.daysB">Friday</span><span dir="ltr">[00:00 – 00:00]</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-i18n="home.findTitle">Find us</h3>
+          <p class="muted">[Street address]<br><span data-i18n="home.address">Benghazi, Libya</span></p>
+          <p class="muted" dir="ltr">[Phone number]</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGN-UP BANNER (guests only; hidden by js/home.js when logged in) -->
+    <section class="home-cta" id="homeCta">
+      <h2 data-i18n="home.ctaTitle">Ready to order?</h2>
+      <p data-i18n="home.ctaText">Create a free account to order to your table and track every order.</p>
+      <div class="hero-actions">
+        <a href="register.html" class="btn btn-primary" data-i18n="register.submit">Create account</a>
+        <a href="login.html" class="btn btn-outline" data-i18n="login.submit">Log in</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/shared/storage.js"></script>
+  <script src="js/shared/auth.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

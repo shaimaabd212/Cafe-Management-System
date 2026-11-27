@@ -27,6 +27,7 @@ Object.assign(I18N.en, {
   "menuAdmin.fieldImageFile": "Or upload image",
   "menuAdmin.imageHint": "Supports image URL/path or local file preview.",
   "menuAdmin.noPreview": "No image selected",
+  "menuAdmin.removePhoto": "Remove photo",
   "menuAdmin.fieldAvailable": "Availability",
   "menuAdmin.cancel": "Cancel",
   "menuAdmin.save": "Save item",
@@ -44,6 +45,7 @@ Object.assign(I18N.en, {
   "menuAdmin.errName": "Please enter an item name.",
   "menuAdmin.errCategory": "Please enter or choose a category.",
   "menuAdmin.errPrice": "Please enter a valid price of 0 or more.",
+  "menuAdmin.errStorage": "Could not save changes. Try a smaller image or an image path.",
   "menuAdmin.saved": "Menu item saved.",
   "menuAdmin.deleted": "Menu item removed.",
   "menuAdmin.toggled": "Availability updated."
@@ -72,6 +74,7 @@ Object.assign(I18N.ar, {
   "menuAdmin.fieldImageFile": "أو رفع صورة",
   "menuAdmin.imageHint": "يدعم رابط/مسار صورة أو معاينة ملف محلي.",
   "menuAdmin.noPreview": "لا توجد صورة محددة",
+  "menuAdmin.removePhoto": "حذف الصورة",
   "menuAdmin.fieldAvailable": "التوفر",
   "menuAdmin.cancel": "إلغاء",
   "menuAdmin.save": "حفظ الصنف",
@@ -89,6 +92,7 @@ Object.assign(I18N.ar, {
   "menuAdmin.errName": "يرجى إدخال اسم الصنف.",
   "menuAdmin.errCategory": "يرجى إدخال أو اختيار فئة.",
   "menuAdmin.errPrice": "يرجى إدخال سعر صحيح (0 أو أكثر).",
+  "menuAdmin.errStorage": "تعذر حفظ التغييرات. جرّب صورة أصغر أو مسار صورة.",
   "menuAdmin.saved": "تم حفظ الصنف.",
   "menuAdmin.deleted": "تم حذف الصنف.",
   "menuAdmin.toggled": "تم تحديث حالة التوفر."
@@ -96,6 +100,7 @@ Object.assign(I18N.ar, {
 
 (function () {
   let uploadedDataUrl = "";
+  let photoCleared = false;
 
   function readMenu() {
     if (typeof load === "function") return load("menu", []);
@@ -107,11 +112,17 @@ Object.assign(I18N.ar, {
   }
 
   function writeMenu(items) {
-    if (typeof save === "function") {
-      save("menu", items);
-      return;
+    try {
+      if (typeof save === "function") {
+        save("menu", items);
+        return true;
+      }
+      localStorage.setItem("riwaq_menu", JSON.stringify(items));
+      return true;
+    } catch {
+      showNotice(t("menuAdmin.errStorage"), "error");
+      return false;
     }
-    localStorage.setItem("riwaq_menu", JSON.stringify(items));
   }
 
   function escapeHtml(value) {
@@ -144,19 +155,77 @@ Object.assign(I18N.ar, {
     box.hidden = false;
   }
 
+  function ensureClearPhotoBtn() {
+    const img = document.getElementById("imagePreview");
+    if (!img || !img.parentElement) return null;
+    img.parentElement.style.position = "relative";
+
+    let btn = document.getElementById("btnClearPhoto");
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "btnClearPhoto";
+      btn.textContent = "✕";
+      btn.style.cssText =
+        "position:absolute;top:6px;inset-inline-end:6px;width:24px;height:24px;border-radius:999px;" +
+        "border:none;background:rgba(0,0,0,.72);color:#fff;font-size:13px;line-height:1;cursor:pointer;";
+      btn.addEventListener("click", clearPhoto);
+      img.parentElement.appendChild(btn);
+    }
+    btn.title = t("menuAdmin.removePhoto");
+    btn.setAttribute("aria-label", t("menuAdmin.removePhoto"));
+    return btn;
+  }
+
+  function clearPhoto() {
+    uploadedDataUrl = "";
+    photoCleared = true;
+    const fileInput = document.getElementById("itemImageFile");
+    const urlInput = document.getElementById("itemImageUrl");
+    if (fileInput) fileInput.value = "";
+    if (urlInput) urlInput.value = "";
+    updatePreview("");
+  }
+
   function updatePreview(src) {
     const img = document.getElementById("imagePreview");
     const placeholder = document.getElementById("imagePreviewPlaceholder");
+    const clearBtn = ensureClearPhotoBtn();
+    if (!img) return;
+
     const resolved = resolveImgSrc(src);
     if (resolved) {
       img.src = resolved;
       img.hidden = false;
       if (placeholder) placeholder.hidden = true;
+      if (clearBtn) clearBtn.hidden = false;
     } else {
       img.removeAttribute("src");
       img.hidden = true;
       if (placeholder) placeholder.hidden = false;
+      if (clearBtn) clearBtn.hidden = true;
     }
+  }
+
+  function compressImage(file, maxSize = 480, quality = 0.72) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const im = new Image();
+        im.onload = () => {
+          const scale = Math.min(1, maxSize / Math.max(im.width, im.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(im.width * scale));
+          canvas.height = Math.max(1, Math.round(im.height * scale));
+          canvas.getContext("2d").drawImage(im, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        im.onerror = reject;
+        im.src = String(reader.result || "");
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   function openModal(item = null) {
@@ -169,6 +238,7 @@ Object.assign(I18N.ar, {
     form.querySelectorAll(".field.invalid").forEach((f) => f.classList.remove("invalid"));
     form.querySelectorAll(".field .error").forEach((e) => (e.textContent = ""));
     uploadedDataUrl = "";
+    photoCleared = false;
 
     if (item) {
       title.textContent = t("menuAdmin.modalEdit");
@@ -307,7 +377,6 @@ Object.assign(I18N.ar, {
 
   function handleFormSubmit(e) {
     e.preventDefault();
-    const form = e.target;
     const nameInput = document.getElementById("itemName");
     const catInput = document.getElementById("itemCategory");
     const priceInput = document.getElementById("itemPrice");
@@ -333,19 +402,20 @@ Object.assign(I18N.ar, {
     if (!valid) return;
 
     const menu = readMenu();
-    const chosenImage = uploadedDataUrl || imgUrlInput.value.trim();
+    const typedUrl = imgUrlInput.value.trim();
+    const existingItem = idVal ? menu.find((m) => String(m.id) === String(idVal)) : null;
+    const chosenImage = typedUrl || uploadedDataUrl || (photoCleared ? "" : (existingItem?.image || ""));
     const availBool = availSelect.value === "true";
 
-    if (idVal) {
-      const target = menu.find((m) => String(m.id) === String(idVal));
-      if (target) {
-        target.name = nameInput.value.trim();
-        target.category = catInput.value.trim();
-        target.price = priceNum;
-        target.image = chosenImage;
-        target.available = availBool;
-        target.soldOut = !availBool;
-      }
+    if (existingItem) {
+      Object.assign(existingItem, {
+        name: nameInput.value.trim(),
+        category: catInput.value.trim(),
+        price: priceNum,
+        image: chosenImage,
+        available: availBool,
+        soldOut: !availBool
+      });
     } else {
       const nextId = menu.reduce((max, m) => Math.max(max, Number(m.id) || 0), 0) + 1;
       menu.push({
@@ -359,7 +429,7 @@ Object.assign(I18N.ar, {
       });
     }
 
-    writeMenu(menu);
+    if (!writeMenu(menu)) return;
     closeModal();
     render();
     showNotice(t("menuAdmin.saved"), "success");
@@ -373,27 +443,40 @@ Object.assign(I18N.ar, {
       if (e.target.id === "menuModalBackdrop") closeModal();
     });
 
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
     document.getElementById("menuSearch")?.addEventListener("input", render);
     document.getElementById("categoryFilter")?.addEventListener("change", render);
     document.getElementById("availabilityFilter")?.addEventListener("change", render);
 
     document.getElementById("itemImageUrl")?.addEventListener("input", (e) => {
-      if (!uploadedDataUrl) updatePreview(e.target.value.trim());
+      const val = e.target.value.trim();
+      if (val) {
+        uploadedDataUrl = "";
+        photoCleared = false;
+      }
+      updatePreview(val || uploadedDataUrl);
     });
 
-    document.getElementById("itemImageFile")?.addEventListener("change", (e) => {
+    document.getElementById("itemImageFile")?.addEventListener("change", async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) {
         uploadedDataUrl = "";
         updatePreview(document.getElementById("itemImageUrl").value.trim());
         return;
       }
-      const reader = new FileReader();
-      reader.onload = () => {
-        uploadedDataUrl = String(reader.result || "");
+      try {
+        uploadedDataUrl = await compressImage(file);
+        photoCleared = false;
+        if (document.getElementById("itemImageUrl")) {
+          document.getElementById("itemImageUrl").value = "";
+        }
         updatePreview(uploadedDataUrl);
-      };
-      reader.readAsDataURL(file);
+      } catch {
+        showNotice(t("menuAdmin.errStorage"), "error");
+      }
     });
 
     document.getElementById("menuItemForm")?.addEventListener("submit", handleFormSubmit);
@@ -414,15 +497,17 @@ Object.assign(I18N.ar, {
         const nextAvail = !isAvailable(menu[idx]);
         menu[idx].available = nextAvail;
         menu[idx].soldOut = !nextAvail;
-        writeMenu(menu);
-        render();
-        showNotice(t("menuAdmin.toggled"), "success");
+        if (writeMenu(menu)) {
+          render();
+          showNotice(t("menuAdmin.toggled"), "success");
+        }
       } else if (action === "delete") {
         if (!window.confirm(t("menuAdmin.confirmDelete"))) return;
         menu.splice(idx, 1);
-        writeMenu(menu);
-        render();
-        showNotice(t("menuAdmin.deleted"), "success");
+        if (writeMenu(menu)) {
+          render();
+          showNotice(t("menuAdmin.deleted"), "success");
+        }
       }
     });
 

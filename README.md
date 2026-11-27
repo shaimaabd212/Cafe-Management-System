@@ -1,4 +1,4 @@
-<img width="338" height="337" alt="image" src="https://github.com/user-attachments/assets/7330e2b4-951a-4221-b08c-d1827c5e1528" /><p align="center">
+
   <img src="img/riwaq-lockup.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ logo" width="180">
 </p>
 

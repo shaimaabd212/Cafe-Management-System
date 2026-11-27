@@ -13,7 +13,7 @@
 </head>
 <body data-root="../" data-layout="staff" data-page="kitchen" data-roles="barista">
 <div class="admin-layout">
-  <!-- Sidebar is added here by js/shared/layout.js (links depend on the role) -->
+  <!-- Sidebar is added here by js/shared/layout.js -->
 
   <main class="main">
     <header class="page-head">
@@ -21,20 +21,34 @@
         <h1 data-i18n="kitchen.heading">Kitchen queue</h1>
         <p class="sub" data-i18n="kitchen.sub">Move each order from Pending to Preparing to Ready.</p>
       </div>
-      <div class="actions"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-outline btn-sm" id="kitchenRefresh" data-i18n="kitchen.refresh">Refresh</button>
+      </div>
     </header>
 
-    <!-- ===== Page content (M2 · Shora) ===== -->
-    <section class="card empty">
-      <div class="kilim-strip"></div>
-      <p data-i18n="layout.soon">This page is being built.</p>
+    <!-- Status filter tabs + live counters -->
+    <section class="kitchen-toolbar" aria-label="Kitchen order filters">
+      <div class="kitchen-filters" role="group" aria-label="Filter by status">
+        <button type="button" class="btn btn-sm btn-primary active" data-filter="active" data-i18n="kitchen.filterActive">Active queue</button>
+        <button type="button" class="btn btn-sm btn-outline" data-filter="pending" data-i18n="kitchen.filterPending">Pending</button>
+        <button type="button" class="btn btn-sm btn-outline" data-filter="preparing" data-i18n="kitchen.filterPreparing">Preparing</button>
+        <button type="button" class="btn btn-sm btn-outline" data-filter="ready" data-i18n="kitchen.filterReady">Ready</button>
+      </div>
+      <div class="kitchen-stats">
+        <span class="badge badge-pending" id="countPending">0</span>
+        <span class="badge badge-preparing" id="countPreparing">0</span>
+        <span class="badge badge-ready" id="countReady">0</span>
+      </div>
     </section>
+
+    <!-- Orders grid -->
+    <section id="kitchenQueue" class="kitchen-grid" aria-live="polite"></section>
   </main>
 </div>
 
 <script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script src="../js/shared/layout.js"></script>
-<!-- <script src="../js/barista/kitchen.js"></script>  ← add when the page script is ready -->
+<script src="../js/barista/kitchen.js"></script>
 </body>
 </html>

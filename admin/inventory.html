@@ -13,28 +13,65 @@
 </head>
 <body data-root="../" data-layout="staff" data-page="inventory" data-roles="manager">
 <div class="admin-layout">
-  <!-- Sidebar is added here by js/shared/layout.js (links depend on the role) -->
-
   <main class="main">
     <header class="page-head">
       <div>
         <h1 data-i18n="inventory.heading">Inventory</h1>
         <p class="sub" data-i18n="inventory.sub">Stock levels and low-stock alerts.</p>
       </div>
-      <div class="actions"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btnAddStock" data-i18n="inv.add">+ Add stock item</button>
+      </div>
     </header>
 
-    <!-- ===== Page content (M2 · Shora) ===== -->
-    <section class="card empty">
-      <div class="kilim-strip"></div>
-      <p data-i18n="layout.soon">This page is being built.</p>
+    <div id="invAlert" class="alert success" hidden></div>
+
+    <section class="card">
+      <div class="toolbar">
+        <input type="search" id="invSearch" class="input" placeholder="Search stock...">
+        <select id="invFilter" class="select">
+          <option value="all" data-i18n="inv.all">All stock</option>
+          <option value="low" data-i18n="inv.lowOnly">Low / Out only</option>
+        </select>
+      </div>
+      <div id="invTableWrap"></div>
     </section>
   </main>
+</div>
+
+<div class="modal-backdrop" id="invModalBackdrop" aria-hidden="true">
+  <div class="modal">
+    <div class="kilim-strip"></div>
+    <h2 id="invModalTitle" data-i18n="inv.add">Add stock item</h2>
+    <form id="invForm">
+      <input type="hidden" id="stockId">
+      <div class="field">
+        <label for="stockName" data-i18n="inv.name">Item</label>
+        <input type="text" id="stockName" required>
+      </div>
+      <div class="field">
+        <label for="stockUnit" data-i18n="inv.unit">Unit</label>
+        <input type="text" id="stockUnit" placeholder="kg, L, pcs" required>
+      </div>
+      <div class="field">
+        <label for="stockQty" data-i18n="inv.qty">Quantity</label>
+        <input type="number" id="stockQty" min="0" step="0.1" required>
+      </div>
+      <div class="field">
+        <label for="stockMin" data-i18n="inv.min">Min stock</label>
+        <input type="number" id="stockMin" min="0" step="0.1" value="5" required>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="btnCancelInv" data-i18n="inv.cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" data-i18n="inv.save">Save</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script src="../js/shared/layout.js"></script>
-<!-- <script src="../js/admin/inventory.js"></script>  ← add when the page script is ready -->
+<script src="../js/admin/inventory.js"></script>
 </body>
 </html>

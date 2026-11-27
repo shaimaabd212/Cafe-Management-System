@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="home.title">Riwaq Café | Home</title>
-  <link rel="icon" type="image/svg+xml" href="img/riwaq-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Tajawal:wght@400;500;700&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
@@ -33,29 +32,29 @@
 
     <div class="kilim-strip" aria-hidden="true"></div>
 
-    <!-- CATEGORIES (each card opens that category in the menu) -->
+    <!-- CATEGORIES -->
     <section class="home-section">
       <h2 data-i18n="home.catTitle">What are you in the mood for?</h2>
       <p class="sub" data-i18n="home.catSub">Pick a category to start your order.</p>
       <div class="cat-grid">
-        <a href="customer/menu.html?category=cold" class="cat-card">
-          <div class="cat-photo" data-cat="cold"></div>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-blue"></div>
           <div class="cat-body"><h3 data-i18n="cat.cold">Cold drinks</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
         </a>
-        <a href="customer/menu.html?category=hot" class="cat-card">
-          <div class="cat-photo" data-cat="hot"></div>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-red"></div>
           <div class="cat-body"><h3 data-i18n="cat.hot">Hot drinks</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
         </a>
-        <a href="customer/menu.html?category=bakery" class="cat-card">
-          <div class="cat-photo" data-cat="bakery"></div>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-clay"></div>
           <div class="cat-body"><h3 data-i18n="cat.bakery">Bakery</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
         </a>
-        <a href="customer/menu.html?category=cookies" class="cat-card">
-          <div class="cat-photo" data-cat="cookies"></div>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-green"></div>
           <div class="cat-body"><h3 data-i18n="cat.cookies">Cookies</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
         </a>
-        <a href="customer/menu.html?category=rolls" class="cat-card">
-          <div class="cat-photo" data-cat="rolls"></div>
+        <a href="customer/menu.html" class="card cat-card">
+          <div class="cat-arch c-ink"></div>
           <div class="cat-body"><h3 data-i18n="cat.rolls">Cinnamon rolls</h3><span class="cat-link" data-i18n="home.browse">Browse</span></div>
         </a>
       </div>
@@ -92,7 +91,7 @@
       </div>
     </section>
 
-    <!-- SIGN-UP BANNER (guests only) -->
+    <!-- SIGN-UP BANNER (guests only; hidden by js/home.js when logged in) -->
     <section class="home-cta" id="homeCta">
       <h2 data-i18n="home.ctaTitle">Ready to order?</h2>
       <p data-i18n="home.ctaText">Create a free account to order to your table and track every order.</p>
@@ -107,7 +106,6 @@
   <script src="js/shared/storage.js"></script>
   <script src="js/shared/auth.js"></script>
   <script src="js/shared/layout.js"></script>
-  <script src="js/shared/menu-common.js"></script>
   <script src="js/home.js"></script>
 </body>
 </html>

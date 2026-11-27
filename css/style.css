@@ -684,3 +684,87 @@ body[data-layout="site"] > main { flex: 1; width: 100%; }   /* keeps the footer 
   justify-content: flex-end;
   align-items: center;
 }
+
+/* ---------- M2 Menu Admin (Shora) ---------- */
+.menu-toolbar {
+  margin-bottom: 1.25rem;
+}
+.menu-item-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.menu-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: var(--radius-ui);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.menu-thumb-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lime);
+}
+.menu-preview-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 110px;
+  margin-bottom: 1rem;
+  padding: 10px;
+  border: 1px dashed var(--sand);
+  border-radius: var(--radius-ui);
+  background: var(--white);
+}
+.menu-preview-box img {
+  max-height: 120px;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-ui);
+}
+
+/* ---------- M2 Modal fit  ---------- */
+#menuModalBackdrop {
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+}
+
+#menuModalBackdrop .modal {
+  max-height: calc(100vh - 3rem);
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+#menuModalBackdrop .modal-body {
+  overflow-y: auto;
+  padding: 1.15rem 1.4rem;
+}
+
+#menuModalBackdrop .modal-body h2 {
+  font-size: 1.35rem;
+  margin-bottom: 0.9rem;
+}
+
+#menuModalBackdrop .field {
+  margin-bottom: 0.7rem;
+}
+
+#menuModalBackdrop .field input,
+#menuModalBackdrop .field select {
+  padding: 0.5rem 0.75rem;
+}
+
+#menuModalBackdrop .menu-preview-box {
+  min-height: 76px;
+  margin-bottom: 0.75rem;
+  padding: 6px;
+}
+
+#menuModalBackdrop .menu-preview-box img {
+  max-height: 84px;
+}

@@ -4,6 +4,7 @@
 
 <h1 align="center">Riwaq Café · رواق</h1>
 <p align="center"><em>Coffee under the arches — قهوة تحت الأقواس</em></p>
+<p align="center">🌐 <strong>Live site:</strong> <a href="https://shaimaabd212.github.io/Riwaq-Cafe-Management-System/">shaimaabd212.github.io/Riwaq-Cafe-Management-System</a></p>
 
 
 
@@ -104,9 +105,13 @@ cafe-management/
 
 ##  How to Run
 
+**Online:** open the live site — https://shaimaabd212.github.io/Riwaq-Cafe-Management-System/
+
+**On your computer:**
+
 1. Clone the repository:
    ```bash
-   git clone https://github.com/shaimaabd212/Cafe-Management-System.git
+   git clone https://github.com/shaimaabd212/Riwaq-Cafe-Management-System.git
    ```
 2. Open `index.html` in any browser — no server or install needed.
 3. Use the sample accounts to log in:

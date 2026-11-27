@@ -160,6 +160,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (again) again.focus();
   });
 
+  var params = new URLSearchParams(window.location.search);
+  var initialCat = params.get("cat") || params.get("category");
+  if (initialCat) {
+    var validCats = ["all"].concat(getCategories().map(function (c) { return c.id; }));
+    if (validCats.indexOf(initialCat) >= 0) {
+      menuState.cat = initialCat;
+    }
+  }
+
   renderMenu();
   document.addEventListener("langchange", renderMenu);   // Arabic / English switch
   window.addEventListener("storage", renderMenu);        // cart or menu changed in another tab

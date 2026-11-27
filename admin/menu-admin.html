@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="menuAdmin.title">Menu · Riwaq Admin</title>
+  <title data-i18n="menuAdmin.title">Menu Admin · Riwaq</title>
   <link rel="icon" href="../img/riwaq-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,28 +13,129 @@
 </head>
 <body data-root="../" data-layout="staff" data-page="menu-admin" data-roles="manager">
 <div class="admin-layout">
-  <!-- Sidebar is added here by js/shared/layout.js (links depend on the role) -->
+  <!-- Sidebar is added here by js/shared/layout.js -->
 
   <main class="main">
     <header class="page-head">
       <div>
-        <h1 data-i18n="menuAdmin.heading">Menu items</h1>
-        <p class="sub" data-i18n="menuAdmin.sub">Add, edit and hide items and categories.</p>
+        <h1 data-i18n="menuAdmin.heading">Menu management</h1>
+        <p class="sub" data-i18n="menuAdmin.sub">Add, edit, or remove menu items and categories, and toggle availability.</p>
       </div>
-      <div class="actions"><button class="btn btn-primary" id="add-item" data-i18n="menuAdmin.add">Add item</button></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-sm" id="btnNewItem" data-i18n="menuAdmin.addItem">+ Add menu item</button>
+      </div>
     </header>
 
-    <!-- ===== Page content (M2 · Shora) ===== -->
-    <section class="card empty">
-      <div class="kilim-strip"></div>
-      <p data-i18n="layout.soon">This page is being built.</p>
+    <div id="menuAlert" class="alert" role="alert" hidden></div>
+
+    <!-- Filter & search toolbar -->
+    <section class="card menu-toolbar" aria-label="Menu filters">
+      <div class="toolbar">
+        <div class="field grow">
+          <label for="menuSearch" data-i18n="menuAdmin.searchLabel">Search</label>
+          <input type="search" id="menuSearch" placeholder="Search by item name..." data-i18n-placeholder="menuAdmin.searchPlaceholder">
+        </div>
+        <div class="field">
+          <label for="categoryFilter" data-i18n="menuAdmin.categoryLabel">Category</label>
+          <select id="categoryFilter">
+            <option value="all" data-i18n="menuAdmin.allCategories">All categories</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="availabilityFilter" data-i18n="menuAdmin.statusLabel">Availability</label>
+          <select id="availabilityFilter">
+            <option value="all" data-i18n="menuAdmin.allStatus">All items</option>
+            <option value="available" data-i18n="menuAdmin.available">Available</option>
+            <option value="soldout" data-i18n="menuAdmin.soldOut">Sold out</option>
+          </select>
+        </div>
+      </div>
     </section>
+
+    <!-- Menu items table -->
+    <section class="card">
+      <div class="card-head">
+        <h3 data-i18n="menuAdmin.listTitle">Menu items</h3>
+        <small id="menuCount"></small>
+      </div>
+      <div id="menuTableWrap" class="table-wrap"></div>
+    </section>
+
+    <!-- Add / Edit modal -->
+    <div class="modal-backdrop" id="menuModalBackdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="menuModalTitle">
+        <div class="roofline-strip"></div>
+        <div class="modal-body">
+          <h2 id="menuModalTitle" data-i18n="menuAdmin.modalAdd">Add menu item</h2>
+          <form id="menuItemForm" novalidate>
+            <input type="hidden" id="itemId">
+
+            <div class="field">
+              <label for="itemName" data-i18n="menuAdmin.fieldName">Item name</label>
+              <input type="text" id="itemName" name="name" required>
+              <div class="error"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="itemCategory" data-i18n="menuAdmin.fieldCategory">Category</label>
+                <input type="text" id="itemCategory" name="category" list="categorySuggestions" required>
+                <datalist id="categorySuggestions">
+                  <option value="Cold drinks">
+                  <option value="Hot drinks">
+                  <option value="Bakery">
+                  <option value="Cookies">
+                  <option value="Cinnamon rolls">
+                </datalist>
+                <div class="error"></div>
+              </div>
+
+              <div class="field">
+                <label for="itemPrice" data-i18n="menuAdmin.fieldPrice">Price (LYD)</label>
+                <input type="number" id="itemPrice" name="price" step="0.25" min="0" required>
+                <div class="error"></div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="itemImageUrl" data-i18n="menuAdmin.fieldImageUrl">Image path or URL <span class="opt">(optional)</span></label>
+              <input type="text" id="itemImageUrl" name="image" placeholder="../img/...">
+              <div class="error"></div>
+            </div>
+
+            <div class="field">
+              <label for="itemImageFile" data-i18n="menuAdmin.fieldImageFile">Or upload image <span class="opt">(optional)</span></label>
+              <input type="file" id="itemImageFile" accept="image/*">
+              <div class="hint" data-i18n="menuAdmin.imageHint">Supports image URL/path or local file preview.</div>
+            </div>
+
+            <div class="menu-preview-box" id="imagePreviewBox">
+              <img id="imagePreview" src="" alt="Preview" hidden>
+              <span id="imagePreviewPlaceholder" class="muted" data-i18n="menuAdmin.noPreview">No image selected</span>
+            </div>
+
+            <div class="field">
+              <label for="itemAvailable" data-i18n="menuAdmin.fieldAvailable">Availability</label>
+              <select id="itemAvailable" name="available">
+                <option value="true" data-i18n="menuAdmin.available">Available</option>
+                <option value="false" data-i18n="menuAdmin.soldOut">Sold out</option>
+              </select>
+            </div>
+
+            <div class="modal-foot">
+              <button type="button" class="btn btn-outline btn-sm" id="btnCancelModal" data-i18n="menuAdmin.cancel">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-sm" id="btnSaveItem" data-i18n="menuAdmin.save">Save item</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
 <script src="../js/shared/storage.js"></script>
 <script src="../js/shared/auth.js"></script>
 <script src="../js/shared/layout.js"></script>
-<!-- <script src="../js/admin/menu-admin.js"></script>  ← add when the page script is ready -->
+<script src="../js/admin/menu-admin.js"></script>
 </body>
 </html>

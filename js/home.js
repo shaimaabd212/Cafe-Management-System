@@ -1,9 +1,6 @@
 /* =========================================================
    home.js — texts and small behaviour for index.html
-   Owner: Shora
-   Adds the "home.*" keys to the shared dictionary (i18n.js)
-   so nobody else's file has to change.
-   Must be loaded AFTER layout.js, at the end of <body>.
+   Owner: Shora · load AFTER layout.js and menu-common.js
    ========================================================= */
 
 Object.assign(I18N.en, {
@@ -58,8 +55,20 @@ Object.assign(I18N.ar, {
   "home.ctaText": "أنشئ حساباً مجانياً لتطلب إلى طاولتك وتتابع كل طلب.",
 });
 
-// Logged-in users: hide the sign-up banner; staff get a button to their own page.
+// Put a real menu photo inside each category arch (first available item of that category).
+function renderCategoryPhotos() {
+  const menu = getMenu();
+  document.querySelectorAll("[data-cat]").forEach(box => {
+    const inCat = menu.filter(i => i.category === box.dataset.cat);
+    const item = inCat.find(i => i.available) || inCat[0];
+    box.innerHTML = item ? itemVisual(item) : photoPlaceholder();
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  renderCategoryPhotos();
+
+  // Logged-in users: hide the sign-up banner; staff get a button to their own page.
   const user = getCurrentUser();
   if (!user) return;
 
@@ -69,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const primary = document.getElementById("homePrimary");
   if (primary && user.role !== "customer") {
     primary.href = homeFor(user.role);
-    primary.dataset.i18n = "home.goDash";   // so the Arabic switch keeps working
+    primary.dataset.i18n = "home.goDash";
     primary.textContent = t("home.goDash");
   }
 });

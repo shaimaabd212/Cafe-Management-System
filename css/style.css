@@ -629,3 +629,58 @@ body[data-layout="site"] > main { flex: 1; width: 100%; }   /* keeps the footer 
 @media (max-width: 600px) {
   .steps, .visit-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ============================================================
+   PART D — Module M2 (Shora): kitchen queue, menu-admin, inventory
+   ============================================================ */
+.kitchen-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.kitchen-filters,
+.kitchen-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.kitchen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.kitchen-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+.kitchen-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.kitchen-meta {
+  font-size: 0.88rem;
+}
+.kitchen-items {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.kitchen-items li {
+  padding: 3px 0;
+}
+.kitchen-card-foot {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

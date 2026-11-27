@@ -1,4 +1,4 @@
-<p align="center">
+<img width="338" height="337" alt="image" src="https://github.com/user-attachments/assets/7330e2b4-951a-4221-b08c-d1827c5e1528" /><p align="center">
   <img src="img/riwaq-lockup.svg" alt="Riwaq · رواق · ⵔⵉⵡⴰⵇ logo" width="180">
 </p>
 
@@ -44,9 +44,9 @@ The system is divided into **three modules**, one per team member:
 ```
 cafe-management/
 │
-├── index.html                  # Home page (everyone)
-├── login.html                  # All users
-├── register.html               # Customer self-registration
+├── index.html                  # Home page (Shora)
+├── login.html                  # All users (Yasmina)
+├── register.html               # Customer self-registration (Yasmina)
 ├── README.mds
 │
 ├── customer/
@@ -59,14 +59,14 @@ cafe-management/
 │   └── bill.html               # Payment and printable receipt (Shaima)
 │
 ├── barista/
-│   └── kitchen.html            # Order queue: Preparing → Ready
+│   └── kitchen.html            # Order queue: Preparing → Ready (Shora)
 │
 ├── admin/
-│   ├── dashboard.html          # Sales overview
-│   ├── reports.html            # Sales by day, CSV export
-│   ├── users.html              # Manage staff accounts
-│   ├── menu-admin.html         # Manage menu items and categories
-│   └── inventory.html          # Stock levels and low-stock alerts
+│   ├── dashboard.html          # Sales overview (Yasmina)
+│   ├── reports.html            # Sales by day, CSV export (Yasmina)
+│   ├── users.html              # Manage staff accounts (Yasmina)
+│   ├── menu-admin.html         # Manage menu items and categories (Shora)
+│   └── inventory.html          # Stock levels and low-stock alerts (Shora)
 │
 ├── css/
 │   └── style.css               # Shared design system
@@ -126,8 +126,8 @@ cafe-management/
 | Member | Module | Responsibilities |
 |---|---|---|
 | Yasmine| M1 Administration | Auth, users, dashboard, reports, GitHub setup |
-| Shora  | M2 Back of House | Menu admin, kitchen queue, inventory, CSS design system |
-| Shaima | M3 Front of House | Customer ordering, cart, billing, localStorage helpers |
+| Shora  | M2 Back of House | Menu admin, kitchen queue, inventory, localStorage helpers |
+| Shaima | M3 Front of House | Customer ordering, cart, billing,  CSS design system (Visual Identity)|
 
 ---
 

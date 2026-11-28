@@ -26,8 +26,10 @@
   --card:    #FFFDF7;   /* card background */
 
   /* Type */
-  --font-head: "Marcellus", Georgia, serif;
-  --font-body: "Tajawal", system-ui, sans-serif;
+  /* Fonts — one choice for the whole site (team decision):
+     English: Changa (headings + text). Arabic: Kufam (headings + text). */
+  --font-head: "Changa", "Tajawal", sans-serif;
+  --font-body: "Changa", "Tajawal", system-ui, sans-serif;
 
   /* Shape */
   --radius-arch: 999px 999px 0 0;  /* arched top for images/cards */
@@ -39,8 +41,8 @@
   --shadow:   0 1px 2px rgba(33, 26, 23, .06), 0 6px 18px rgba(33, 26, 23, .06);
 
   /* Arabic fonts (used when the page is switched to Arabic) */
-  --font-ar-head:  "Reem Kufi", "Noto Kufi Arabic", sans-serif;
-  --font-ar-body:  "Tajawal", "Noto Kufi Arabic", sans-serif;
+  --font-ar-head:  "Kufam", sans-serif;
+  --font-ar-body:  "Kufam", sans-serif;
   --font-tifinagh: "Noto Sans Tifinagh", sans-serif;
 
   /* Patterns: Ghadames roofline + kilim diamond (Visual Identity, page 7) */
@@ -60,7 +62,7 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3 { font-family: var(--font-head); font-weight: 400; margin: 0 0 8px; }
+h1, h2, h3 { font-family: var(--font-head); font-weight: 700; margin: 0 0 8px; }   /* bold headings */
 h1 { font-size: 2rem; }
 h2 { font-size: 1.5rem; }
 a  { color: var(--blue); }
@@ -389,6 +391,9 @@ table.data .row-actions { display: flex; gap: .4rem; justify-content: flex-end; 
    ========================================================= */
 /* Swap the text font for Arabic: every rule that uses var(--font-body) follows. */
 :root[dir="rtl"] { --font-body: var(--font-ar-body); }
+/* Kufam is wide, so Arabic text is a little smaller: 15px instead of 16px */
+html[dir="rtl"] { font-size: 93.75%; }
+html[dir="rtl"] body { font-size: 15px; }
 [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 { font-family: var(--font-ar-head); font-weight: 700; }
 [dir="rtl"] .kpi .value { font-family: var(--font-ar-body); font-weight: 700; font-size: 1.75rem; }
 [dir="rtl"] h1 { line-height: 1.5; }
